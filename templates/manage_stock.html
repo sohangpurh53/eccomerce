@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Stock</title>
+</head>
+<body>
+    <h1>Manage Stock for {{ seller.company_name }}</h1>
+    <ul>
+        {% for product in products %}
+        <li>
+            <h3>{{ product.name }}</h3>
+            <p>Description: {{ product.description }}</p>
+            <p>Price: ${{ product.price }}</p>
+            <p>Stock: {{ product.stock }}</p>
+            <form method="post" action="{% url 'manage_stock' seller.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <label for="quantity">Quantity:</label>
+                <input type="number" name="quantity" min="1" max="{{ product.stock }}" required>
+                <button type="submit">Purchase</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<link rel="stylesheet" href="/css/sellerlogin.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends 'base.html' %}
+
+{% block content %}
+  
+
+ 
+{% if not request.user.seller %}
+{% if error_message %}
+<h4>{{ error_message }}</h4>
+{% endif %}
+{% endif %}
+
+{% if messages %}
+{% for message in messages%}
+<h4>{{ message }}</h4>
+{% endfor %}
+{% endif %}
+ 
+<div class="container">
+  <h2>Seller Login</h2>
+  <form id="seller" method="POST">
+    {% csrf_token %}
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <br>
+    <input type="submit" value="Login">
+    <p> Don't have seller account? <a class="register" href="{% url 'seller_registration' %}">Register</a></p>
+  </form></div>
+{% endblock %}

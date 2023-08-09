@@ -1,0 +1,90 @@
+
+<link rel="stylesheet" href="/css/product.css">
+
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if messages %}
+        {% for message in messages %}
+            <p class="messages">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+   
+   
+   
+    <div class="container">
+        <div class="product-details">
+            <div class="product-image">
+                <img src="{{ product.image.url }}" alt="Product 1">
+            </div>
+
+            <div class="product-info">
+                <h2 class="product-title">{{ product.name }}</h2>
+                <p class="product-description">{{ product.description }}</p>
+                <p class="product-price">&#8377;{{ product.price }}</p>
+
+               
+                <div class="add-to-cart"> {%if product.initial_stock == 0 %}  
+                <h3>Product is currently out of stock </h3> 
+                {% elif product.initial_stock > 0 %}
+                    <a href="{% url 'add_to_cart' product_id=product.id  %}" class="add-to-cart-button">
+                        <i class="fas fa-cart-plus"></i> Add to Cart
+                    </a>
+                    <a href="{% url 'add_to_cart' product_id=product.id %}?buy_now=true" class="buy-now-button">Buy Now</a>
+          {% endif %}      </div>
+            </div>
+         </div>
+    </div>
+
+    <div class="container">
+        <h2>Reviews</h2>
+        {% if reviews %}
+            <ul class="reviews-list">
+                {% for review in reviews %}
+                    <li class="review-item">
+                        <strong class="review-user">User: {{ review.user.username }}</strong>
+                        {% if user.is_authenticated and review.user == user %}
+                        <a href="{% url 'edit_review' review_id=review.id  product_id=product.id%}" class="edit-review-button">Edit</a>
+                        
+                        {% endif %}
+                        <div class="review-rating">Rating: {{ review.rating }} 
+                        <!-- Rating stars (unchanged) -->
+                        {% if review.rating == 1 %}
+                        <i class="fas fa-star star"></i> 
+                        {% elif review.rating == 2%}
+                        <i class="fas fa-star star"></i> <i class="fas fa-star star"></i> 
+                        {% elif review.rating == 3%}
+                        <i class="fas fa-star star"></i> <i class="fas fa-star star"></i> </i> <i class="fas fa-star star"></i> 
+                        {%elif review.rating == 4%}
+                        <i class="fas fa-star star"></i> <i class="fas fa-star star"></i> <i class="fas fa-star star"></i> <i class="fas fa-star star"></i>
+                        {%elif review.rating == 5%}
+                        <i class="fas fa-star star"></i> <i class="fas fa-star star"></i> <i class="fas fa-star star"></i> <i class="fas fa-star star"></i> <i class="fas fa-star star"></i>
+                        {% endif %}
+                        </div>
+                        <div class="review-comment">Comment: {{ review.comment }}</div>
+                        <div class="review-date">Date: {{ review.created_at }}</div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No reviews yet.</p>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+            {% if not user_has_reviewed %}
+                <h2>Write a Review</h2>
+                <form method="post" class="review-form">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="review-submit">Submit Review</button>
+                </form>
+            {% else %}
+                <p>Your review has been submitted. Thank you for your feedback!</p>
+            {% endif %}
+        {% else %}
+            <p>Login to write a review.</p>
+        {% endif %}
+
+    </div>
+{% endblock %}

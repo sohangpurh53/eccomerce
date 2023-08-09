@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="/css/sellerprofile.css">
+    <title>Seller Profile</title>
+    {% extends 'base.html' %}
+    {% block content %}
+<body>
+    <h1>Welcome, {{ seller.company_name }}!</h1>
+
+    <h2>Products:</h2>
+    <ul>
+        {% for product in products %}
+            <li id="seller-profile">
+                <div class="product-info">
+                    <div class="product-name">{{ product.name }}</div>
+                    <div class="product-stock">Stock: {{ product.initial_stock }} </div>
+                </div>
+                <div class="product-description">{{ product.description }}</div>
+                <div>Price: &#8377;{{ product.price }}</div>
+                <a class="edit" target="_blank" href="{% url 'seller_editproduct' product_id=product.id %}">Edit Product</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Orders:</h2>
+    <ul>
+        {% for order in orders %}
+            <li id="seller-profile">
+                <div class="order-info">
+                    Order ID: <span class="order-id">{{ order.order.id }}</span>
+                    - Product: {{ order.product.name }}
+                </div>
+                <div>Quantity: {{ order.quantity }}</div>
+                <div>Total Amount: &#8377;<span class="total-amount">{{ order.order.total_amount }}</span></div>
+                <div>Created At: {{ order.order.created_at }}</div>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+{% endblock %}

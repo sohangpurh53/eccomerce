@@ -1,0 +1,17 @@
+<link rel="stylesheet" href="/css/category.css">
+{% extends 'base.html' %}
+{% block content %}
+
+{% for category in categories %}
+    <h2>{{ category.name }}</h2>
+    <ol>
+        {% for product in products %}
+            {% if product.category == category %}
+           <a href="{% url 'productpage' product_id=product.id %}">  <li> <img src="{{ product.image.url }}" alt=""><p>{{ product.name }}</p> </li></a>
+            
+            {% endif %}
+        {% endfor %}
+    </ol>
+{% endfor %}
+
+{% endblock %}

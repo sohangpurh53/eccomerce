@@ -1,0 +1,18 @@
+<!-- success.html -->
+<link rel="stylesheet" href="/css/success.css">
+
+<!-- success.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <div class="success-container">
+      <i class="fas fa-check-circle success-icon"></i>
+      <h1 class="success-heading">Order Placed Successfully!</h1>
+      <p class="success-message">Thank you for shopping with us.</p>
+      <p class="success-submessage">Your order will be delivered soon.</p>
+      <a href="{% url 'Homepage' %}" class="continue-shopping">Continue Shopping</a>
+    </div>
+  </div>
+{% endblock %}

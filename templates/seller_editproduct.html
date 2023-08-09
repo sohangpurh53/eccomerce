@@ -1,0 +1,14 @@
+<link rel="stylesheet" href="/css/sellereditproduct.css">
+{% extends 'base.html' %}
+
+{% block content %}
+  
+  <div class="container">
+    <h4>Update Product</h4>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Update">
+  </form>
+</div>
+{% endblock %}

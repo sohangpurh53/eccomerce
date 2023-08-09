@@ -1,0 +1,60 @@
+/* Category Heading */
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Product List */
+  ol {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  ol li {
+    display: inline-block;
+    margin: 10px;
+    background-color: #f5f5f5;
+    padding: 15px;
+    width: 200px;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+   
+  }
+  
+  ol li:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+ ol li img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+    object-fit: contain;
+  }
+  
+ ol li p {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  
+ ol li a{
+    text-decoration: none;
+  }
+
+
+  @media (max-width: 767px){
+    ol li {
+      margin: 10px;
+      background-color: #f5f5f5;
+      padding: 7.5px;
+      width: 75px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+     
+    }
+    
+
+  }

@@ -1,0 +1,61 @@
+<link rel="stylesheet" href="/css/seller_dashboard.css">
+<!-- seller_dashboard.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  
+{% if messages %}
+  {% for message in messages %}
+  <h2>{{ message }}</h2>
+  {% endfor %}
+  {% endif %}
+
+<div class="container"><h4>Welcome to your Seller Dashboard</h4>
+  <!-- Create Category Form -->
+  <h3>Create Category</h3>
+  <form method="POST">
+    {% csrf_token %}
+    <label for="category_name">Category Name:</label>
+    <input type="text" id="category_name" name="category_name" required>
+    <br>
+    <input type="submit" name="create_category" value="Create Category">
+  </form>
+
+  <!-- Add Product Form -->
+  <h3>Add Product</h3>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="product_name">Product Name:</label>
+    <input type="text" id="product_name" name="product_name" required>
+    <br>
+    <label for="product_description">Description:</label>
+    <textarea id="product_description" name="product_description" required></textarea>
+    <br>
+    <label for="product_price">Price:</label>
+    <input type="number" id="product_price" name="product_price" required>
+    <br>
+    <label for="product_category">Category:</label>
+    <select id="product_category" name="product_category" required>
+      {% for category in categories %}
+        <option value="{{ category.id }}">{{ category.name }}</option>
+      {% endfor %}
+    </select>
+    <br>
+    <label for="product_image">Image:</label>
+    <input type="file" id="product_image" name="product_image" required>
+    <br>
+    <input type="submit" name="add_product" value="Add Product">
+  </form>
+</div>
+  <!-- List of Products -->
+ <div class="container-productlist"> <h3>Your Products</h3>
+  <ol>
+    {% for product in products %}
+   <li> <img class="productlist" src="{{product.image.url}}" alt="">
+      Item Name: {{ product.name }}</li>
+      <a class="edit" target="_blank" href="{% url 'seller_editproduct' product_id=product.id %}">Update</a>
+    {% empty %}
+      <li>No products available.</li>
+    {% endfor %}
+  </ol></div>
+{% endblock %}

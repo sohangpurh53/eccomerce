@@ -1,0 +1,64 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+  color: #1a73e8;
+}
+
+h2 {
+  color: #1a73e8;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+#seller-profile {
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.product-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-name {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.product-description {
+  color: #777;
+}
+
+.product-stock {
+  font-size: 14px;
+  color: #666;
+}
+
+.order-info {
+  font-size: 14px;
+  color: #666;
+}
+
+.order-id {
+  font-weight: bold;
+}
+
+.total-amount {
+  font-weight: bold;
+  color: #1a73e8;
+}
+
+.edit{
+text-decoration: none;
+}

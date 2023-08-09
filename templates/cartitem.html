@@ -1,0 +1,13 @@
+<link rel="stylesheet" href="/css/sellerregister.css">
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>cart item</h2>
+  <div class="container">
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Register">
+  </form>
+</div>
+{% endblock %}

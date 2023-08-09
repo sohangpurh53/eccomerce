@@ -1,0 +1,197 @@
+/* product.css */
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.product-details {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.product-image {
+  flex: 1;
+}
+
+.product-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.product-info {
+  flex: 1;
+  padding-left: 20px;
+}
+
+.product-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.product-description {
+  margin-bottom: 10px;
+}
+
+.product-price {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.add-to-cart {
+  display: flex;
+  align-items: center;
+}
+
+.add-to-cart-button,
+.buy-now-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.buy-now-button {
+  background-color: #28a745;
+}
+
+/* Reviews Section */
+
+.reviews-list {
+  list-style: none;
+  padding: 0;
+}
+
+.review-item {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.review-user {
+  font-weight: bold;
+}
+
+.review-rating {
+  margin-bottom: 5px;
+}
+
+.review-comment {
+  margin-bottom: 5px;
+}
+
+.review-date {
+  color: #777;
+  font-size: 12px;
+}
+
+/* Review Form */
+
+.review-form {
+  margin-top: 20px;
+}
+
+.review-form label {
+  display: block;
+  font-weight: bold;
+}
+
+.review-form textarea,
+.review-form select {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+}
+
+.review-submit {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.star{
+  color: gold;
+  
+}
+
+.edit-review-button {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.edit-review-button:hover {
+  background-color: #0056b3;
+}
+
+
+/* Styles for the review form */
+form {
+  margin-top: 20px;
+}
+
+
+.reviewcontainer textarea{
+  width: 80%;
+  margin-bottom: 10px;
+  resize: vertical;
+}
+.reviewcontainer{
+  width: 400px;
+  margin: 0 auto;
+  border: 1px solid black;
+  padding: 15px;
+  margin-bottom: 50px;
+  margin-top: 50px;
+
+
+}
+.reviewcontainer input[type='number']{
+  width: 80%;
+  margin-bottom: 10px;
+  resize: vertical;
+  padding: 10px;
+  
+}
+
+input[type='submit'] {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type='submit']:hover {
+  background-color: #0056b3;
+}
+h3{
+  color: rgb(246, 50, 50);
+}
+
+.messages{
+text-align: center;
+color: #28a745;
+}

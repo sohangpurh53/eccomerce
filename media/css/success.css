@@ -1,0 +1,49 @@
+/* styles.css */
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .success-container {
+    text-align: center;
+    padding: 50px 0;
+  }
+  
+  .success-icon {
+    color: #42b72a;
+    font-size: 80px;
+    margin-bottom: 20px;
+  }
+  
+  .success-heading {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+  
+  .success-message {
+    font-size: 18px;
+    margin-bottom: 5px;
+  }
+  
+  .success-submessage {
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .continue-shopping {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    text-decoration: none;
+    background-color: #2874f0;
+    color: #fff;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .continue-shopping:hover {
+    background-color: #1c5ea4;
+  }
+  

@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="/css/base.css">
+  {% include 'navbar.html' %}
+ 
+    <!-- Loading overlay -->
+    <div class="loading-overlay">
+      <div class="loading-spinner"></div>
+  </div>
+
+
+  <div class="content">
+  <!-- Page content that will be displayed when loaded -->
+  <div class="loaded-content">
+    <!-- Your existing content here -->
+
+    {% block content %}
+    {% endblock %}
+</div>
+  </div>
+  <script>
+    // JavaScript code to handle page load and hide loading overlay
+    window.addEventListener("load", function () {
+        var loadingOverlay = document.querySelector(".loading-overlay");
+        var loadedContent = document.querySelector(".loaded-content");
+
+        loadingOverlay.style.display = "none";
+        loadedContent.style.display = "block";
+    });
+</script>
+<div class="base-footer"> {% include 'footer.html' %}</div>

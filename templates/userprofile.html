@@ -1,0 +1,54 @@
+<!-- userprofile.html -->
+
+    <title>User Profile</title>
+    <!-- Add your CSS files here -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="/css/userprofile.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends 'base.html' %}
+{% block content %}
+<body>
+    <div class="container">
+        <div class="profile-info">
+            <h1>Welcome, {{ user.username }}!</h1>
+            {% if user.email %} <p>Email: {{ user.email }}</p> {% endif %}
+          {% if user.seller %}  <p>Company: {{ user.seller.company_name }}</p> <!-- If the user is a seller -->{% endif %}
+        {{order_item.user}}
+        </div>
+        <h4>Your Orders:</h4>
+
+            <ol>
+                {% for order_entry in order_data %}
+            <li>
+                Total Amount: &#8377;{{ order_entry.order.total_amount }}
+                <ul>
+                    {% for order_item in order_entry.order_items %}
+                        <li>
+                            <img class="product-img" src="{{order_item.product.image.url}}" alt="">
+                           
+                            <span>Quantity: {{ order_item.quantity }}</span><p>Product: {{ order_item.product }}</p> 
+                        </li>
+                    {% endfor %}
+                </ul>
+             {% empty %}
+            No Order yet.
+        {% endfor %}
+            </ol>
+           
+        <div class="profile-reviews">
+            <h2>Your Reviews:</h2>
+            <ul>
+                {% for review in user.review_set.all %}
+                    <li>
+                        <p>Product: {{ review.product.name }}</p>
+                        <p>Rating: {{ review.rating }}</p>
+                        <p>Comment: {{ review.comment }}</p>
+                    </li>
+                {% empty %}
+                    <li>No reviews yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+{% endblock %}

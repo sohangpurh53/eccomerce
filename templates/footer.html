@@ -1,0 +1,39 @@
+<link rel="stylesheet" href="/css/footer.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<footer class="footer">
+    <div class="footer-container">
+      <div class="footer-logo">
+        <a href="{% url 'Homepage' %}">Logo</a>
+      </div>
+      <div class="footer-links">
+        <ul class="footer-menu">
+          <li><a href="{% url 'Homepage' %}">Home</a></li>
+          <!-- <li><a href="#">Shop</a></li> -->
+        {% if not user.is_authenticated %}  <li><a href="{% url 'seller_dashboard' %}"><i class="fas fa-shopping-bag"></i> Seller login</a></li>
+        {% elif request.user.seller %}
+        <li><a href="{% url 'sellerprofile' %}"> <i class="fas fa-user"></i>SellerProfile</a></li>
+         {% endif %}
+          <li><a href="{% url 'categories_product' %}">Categories</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-social">
+        <ul class="social-icons">
+          <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+          <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+          <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+          <li><a href="#"><i class="fab fa-pinterest"></i></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <p>&copy; 2023 Lulu Collection. All rights reserved.</p>
+      <p><a href="#">Terms of Service</a> | <a href="#">Privacy Policy</a></p>
+    </div>
+  </footer>
+  
