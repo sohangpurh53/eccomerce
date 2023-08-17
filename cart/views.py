@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Order, OrderItem, Product, Category,Seller, Cart, CartItem, ShippingAddress,Review,Payment
+from .models import Order, OrderItem, Product, Category,Seller, Cart, CartItem, ShippingAddress,Review
 from .forms import SellerRegistrationForm, ProductForm, SignupForm,LoginForm, ShippingAddressForm, ReviewForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -68,13 +68,14 @@ def seller_dashboard(request):
             name = request.POST.get('product_name')
             description = request.POST.get('product_description')
             price = request.POST.get('product_price')
+            initial_stock = request.POST.get('initial_stock')
             category_id = request.POST.get('product_category')
             image = request.FILES.get('product_image')
             
             category = Category.objects.get(id=category_id)
             seller = request.user.seller
             
-            Product.objects.create(name=name, description=description, price=price,
+            Product.objects.create(name=name, description=description, price=price, initial_stock=initial_stock,
                                    category=category, seller=seller, image=image)
             return redirect('seller_dashboard')
 
@@ -141,7 +142,7 @@ def seller_editproduct(request, product_id):
 
     
     if request.method == 'POST':
-        form = ProductForm(request.POST, instance=products)
+        form = ProductForm(request.POST, request.FILES, instance=products)
         if form.is_valid():
             form.save()
             return redirect('seller_dashboard')
@@ -297,6 +298,8 @@ def checkout(request):
     user = request.user
     cart = Cart.objects.get(user=user)
     cart_items = CartItem.objects.filter(cart=cart)
+    
+    
 
     shipping_fee = 50
     total_amount = sum(item.product.price * item.quantity + shipping_fee for item in cart_items)
@@ -311,6 +314,8 @@ def checkout(request):
         state = request.POST.get('state')
         country = request.POST.get('country')
         postal_code = request.POST.get('postal_code')
+        created_at = request.POST.get('created_at')
+        
 
         shipping_address = ShippingAddress.objects.create(
             user=user,
@@ -325,16 +330,15 @@ def checkout(request):
         razorpay_order = client.order.create({
             'amount': int(total_amount * 100),
             'currency': 'INR',
-            'receipt': 'order_receipt',
+            'payment_capture': 1,
         })
+        print('****')
         print(razorpay_order)
+        print('***')
+        order = Order(user=user, created_at=created_at, total_amount=total_amount, razor_pay_order_id=razorpay_order['id'])
+        order.save()
 
-        # Create an order in the database
-        order = Order.objects.create(
-            user=user,
-            total_amount=total_amount,
-            payment_status=False  # Payment status will be updated after successful payment
-        )
+        
 
         # Save order items and update product stocks
         for cart_item in cart_items:
@@ -347,13 +351,9 @@ def checkout(request):
             cart_item.product.initial_stock -= cart_item.quantity
             cart_item.product.save()
 
-        # Create a payment entry with pending status
-        payment = Payment.objects.create(
-            order=order,
-            payment_id=razorpay_order['id'],
-            amount=total_amount,
-            status=False  # Payment status will be updated after successful payment
-        )
+            #empty cart item after order
+            
+
         
 
         context = {
@@ -363,12 +363,39 @@ def checkout(request):
             'currency': 'INR',
             'razorpay_key': settings.KEY_ID,
             'razorpay_order_id': razorpay_order['id'],
+
         }
 
         # Redirect to Razorpay payment page
         return render(request, 'checkout.html', context)
 
     return render(request, 'checkout.html', {'cart_items': cart_items})
+
+
+def payment_success(request):
+    payment_id = request.GET.get('razorpay_payment_id')
+    order_id = request.GET.get('razorpay_order_id')
+    payment_signature = request.GET.get('razorpay_signature')
+    cart_item = request.GET.get('cart_item')
+
+    # Save payment information in your Order model
+    order = Order.objects.get(razor_pay_order_id=order_id)
+    order.razor_pay_payment_id = payment_id
+    order.razor_pay_payment_signature = payment_signature
+    order.is_paid = True  # Update the order status
+    order.save()
+
+    if order.is_paid == True:
+     cart_item = CartItem.objects.all()
+     cart_item.delete()
+
+    return render(request, 'success.html', {'payment_id':payment_id, 'order_id':order_id})
+
+def payment_failure(request):
+    error_code = request.GET.get('error_code')
+    error_description = request.GET.get('error_description')
+
+    return render(request, 'failedpayment.html', {'error_code': error_code, 'error_description': error_description})
 
 
 

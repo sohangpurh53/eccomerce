@@ -67,7 +67,10 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_status = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False)
+    razor_pay_order_id = models.CharField(max_length=150, null=True, blank=True)
+    razor_pay_payment_id = models.CharField(max_length=150, null=True, blank=True)
+    razor_pay_payment_signature = models.CharField(max_length=150, null=True, blank=True)
 
     def __str__(self):
         return f"Order {self.id}"
@@ -134,12 +137,3 @@ class ShippingAddress(models.Model):
     def __str__(self):
         return f"Shipping Address for {self.user.username}"
 
-class Payment(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    payment_id = models.CharField(max_length=100, default=False)
-    amount = models.DecimalField(max_digits=10, decimal_places=2, default=False)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    status = models.BooleanField(default=False)  # True for successful, False for failed
-
-    def __str__(self):
-        return f"Payment for Order {self.order.id}"
