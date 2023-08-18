@@ -363,7 +363,6 @@ def checkout(request):
             'currency': 'INR',
             'razorpay_key': settings.KEY_ID,
             'razorpay_order_id': razorpay_order['id'],
-            'saved_addresses':saved_addresses,
 
         }
 
