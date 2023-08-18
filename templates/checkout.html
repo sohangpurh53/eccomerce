@@ -6,6 +6,7 @@
     <h1>Checkout</h1>
     <div class="row">
         <div class="col-md-8">
+            
             <form method="post" action="{% url 'checkout' %}">
                 {% csrf_token %}
                 <div class="form-group">
@@ -87,5 +88,16 @@ document.getElementById('rzp-button1').onclick = function(e){
     rzp1.open();
     e.preventDefault();
 }
+
+var rzp2 = new Razorpay(options);
+
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp2.open();
+    e.preventDefault();
+    return false; // Add this line to prevent the form submission
+}
+
+// Automatically trigger Razorpay form submission when the page loads
+rzp2.open();
 </script>
 {% endblock %}

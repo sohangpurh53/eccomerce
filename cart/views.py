@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Order, OrderItem, Product, Category,Seller, Cart, CartItem, ShippingAddress,Review
-from .forms import SellerRegistrationForm, ProductForm, SignupForm,LoginForm, ShippingAddressForm, ReviewForm
+from .models import Order, OrderItem, Product, Category,Seller, Cart, CartItem, ShippingAddress,Review, AboutUs
+from .forms import SellerRegistrationForm, ProductForm, SignupForm,LoginForm, ShippingAddressForm, ReviewForm, AboutUsForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -300,12 +300,13 @@ def checkout(request):
     cart_items = CartItem.objects.filter(cart=cart)
     
     
+    
 
-    shipping_fee = 50
+    shipping_fee = 0
     total_amount = sum(item.product.price * item.quantity + shipping_fee for item in cart_items)
 
-    if total_amount > 599:
-        shipping_fee = 0
+    if total_amount <= 599:
+        shipping_fee = 50
         total_amount = sum(item.product.price * item.quantity + shipping_fee for item in cart_items)
 
     if request.method == 'POST':
@@ -332,11 +333,11 @@ def checkout(request):
             'currency': 'INR',
             'payment_capture': 1,
         })
-        print('****')
-        print(razorpay_order)
-        print('***')
+       
         order = Order(user=user, created_at=created_at, total_amount=total_amount, razor_pay_order_id=razorpay_order['id'])
         order.save()
+
+        
 
         
 
@@ -348,8 +349,7 @@ def checkout(request):
                 quantity=cart_item.quantity
             )
             # Update the product's initial stock
-            cart_item.product.initial_stock -= cart_item.quantity
-            cart_item.product.save()
+            
 
             #empty cart item after order
             
@@ -363,6 +363,7 @@ def checkout(request):
             'currency': 'INR',
             'razorpay_key': settings.KEY_ID,
             'razorpay_order_id': razorpay_order['id'],
+            'saved_addresses':saved_addresses,
 
         }
 
@@ -372,11 +373,14 @@ def checkout(request):
     return render(request, 'checkout.html', {'cart_items': cart_items})
 
 
+#order success page
+@login_required(login_url='signin')
 def payment_success(request):
     payment_id = request.GET.get('razorpay_payment_id')
     order_id = request.GET.get('razorpay_order_id')
     payment_signature = request.GET.get('razorpay_signature')
-    cart_item = request.GET.get('cart_item')
+    
+    
 
     # Save payment information in your Order model
     order = Order.objects.get(razor_pay_order_id=order_id)
@@ -388,9 +392,12 @@ def payment_success(request):
     if order.is_paid == True:
      cart_item = CartItem.objects.all()
      cart_item.delete()
+    order = Order.objects.get(razor_pay_order_id=order_id)
 
     return render(request, 'success.html', {'payment_id':payment_id, 'order_id':order_id})
 
+
+#order failure page
 def payment_failure(request):
     error_code = request.GET.get('error_code')
     error_description = request.GET.get('error_description')
@@ -438,7 +445,7 @@ def userprofile(request):
             'order': order,
             'order_items': order_items
         })
-    
+
     
           
     return render(request, 'userprofile.html', {'user':user, 'order_data': order_data})
@@ -464,27 +471,27 @@ def edit_review(request, product_id, review_id):
 
 
 
+@login_required(login_url='seller_login')
+def edit_about_us(request):
+    # Check if the user is a seller
+    if not request.user.seller:
+        # Redirect to a page with an appropriate message or raise an exception
+        return redirect('seller_login')
 
-#Failure page of checkout
-@login_required(login_url='signin')
-def paymentfail(request):
-    return render(request, 'failedpayment.html')
+    about_us, created = AboutUs.objects.get_or_create(seller=request.user.seller)
+
+    if request.method == 'POST':
+        description = request.POST.get('description')
+        brand_logo = request.FILES.get('brand_logo') 
+        about_us.description = description
+        about_us.brand_logo = brand_logo
+        about_us.save()
+        return redirect('Homepage')
+
+    return render(request, 'edit_about_us.html', {'about_us': about_us})
 
 
-
-#success page of checkout
-@login_required(login_url='signin')
-def order_success(request):
-  return render(request, 'success.html')
-
-
-
-# def payment_success(request, payment_id):
-#     try:
-#         payment = Payment.objects.get(payment_id=payment_id, status=True)
-#         # You can also perform additional checks here if needed
-        
-#         return render(request, 'success.html')  # Render the success page
-
-#     except Payment.DoesNotExist:
-#         return redirect('paymentfail') 
+def about_us(request):
+    # Retrieve the AboutUs instance for the logged-in seller
+    about_us = AboutUs.objects.last()   
+    return render(request, 'about_us.html', {'about_us': about_us})

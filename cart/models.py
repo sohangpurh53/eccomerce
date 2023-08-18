@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
+
 # Create your models here.
 from django.db import models
 from django.contrib.auth.models import User
@@ -76,6 +77,7 @@ class Order(models.Model):
         return f"Order {self.id}"
 
 
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -137,3 +139,10 @@ class ShippingAddress(models.Model):
     def __str__(self):
         return f"Shipping Address for {self.user.username}"
 
+class AboutUs(models.Model):
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
+    description = models.TextField()
+    brand_logo = models.ImageField(upload_to='brand_logo', default=False)
+    
+    def __str__(self):
+        return self.description

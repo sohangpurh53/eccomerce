@@ -22,8 +22,9 @@ urlpatterns = [
     path('failure/', views.payment_failure, name='payment_failure'),
      path('sellerprofile/', views.sellerprofile, name='sellerprofile'),
      path('userprofile/', views.userprofile, name='userprofile'),
-     path('paymentfail/', views.paymentfail, name='paymentfail'),
     path('product/<int:product_id>/edit_review/<int:review_id>/', views.edit_review, name='edit_review'),
+    path('about-us-form/', views.edit_about_us, name='edit_about_us'),
+     path('about-us/', views.about_us, name='about_us'),
     
  
     

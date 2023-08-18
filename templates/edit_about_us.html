@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="/css/">
+
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+body, h1, p {
+  margin: 0;
+  padding: 0;
+}
+
+/* Basic styling for the whole page */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #333333;
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #666666;
+}
+
+/* Style for the description textarea */
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  font-size: 16px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+/* Style for the save button */
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 3px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+</style>
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>About Us</h1>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <textarea name="description" rows="6" placeholder="Enter your description..."></textarea>
+      <input type="file" name="brand_logo" >
+      <button type="submit">Save</button>
+    </form>
+  </div>
+</body>
+</html>
+{% endblock %}

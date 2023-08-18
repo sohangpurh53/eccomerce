@@ -1,0 +1,21 @@
+<!-- about_us.html -->
+
+{% extends 'base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us</title>
+  <link rel="stylesheet" href="/css/about_us.css">
+</head>
+<body>
+  <div class="container">
+    <h1>About Us</h1>
+    <p>{{ about_us.description }}</p>
+    <div id="brand-logo"><img src="{{ about_us.brand_logo.url }}"   alt=""></div>
+  </div>
+</body>
+</html>
+{% endblock %}

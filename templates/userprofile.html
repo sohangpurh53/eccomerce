@@ -18,16 +18,26 @@
         </div>
         <h4>Your Orders:</h4>
 
-            <ol>
+            <ol id="user-order">
                 {% for order_entry in order_data %}
-            <li>
-                Total Amount: &#8377;{{ order_entry.order.total_amount }}
+            <li >
+               <p id="user-total">Total Amount: &#8377;{{ order_entry.order.total_amount }}</p> 
                 <ul>
                     {% for order_item in order_entry.order_items %}
                         <li>
                             <img class="product-img" src="{{order_item.product.image.url}}" alt="">
                            
                             <span>Quantity: {{ order_item.quantity }}</span><p>Product: {{ order_item.product }}</p> 
+                            <p>Order ID: {{order_entry.order.razor_pay_order_id}}</p>
+                            <p>Payment ID:{{order_entry.order.razor_pay_payment_id}}</p>
+                            <p>Order Status: 
+                                {% if order_item.order.is_paid %}
+                                <span class="completed-status">Order Recieved</span>
+                                {% else %}
+                                <span class="pending-status">Pending</span>
+                                {% endif %}
+                            </p>
+                            <p>{{order_entry.order.created_at}}</p>
                         </li>
                     {% endfor %}
                 </ul>

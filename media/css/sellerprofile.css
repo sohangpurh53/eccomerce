@@ -25,40 +25,40 @@ ul {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.product-info {
+#seller-profile .product-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.product-name {
+#seller-profile .product-name {
   font-size: 20px;
   font-weight: bold;
 }
 
-.product-description {
+#seller-profile .product-description {
   color: #777;
 }
 
-.product-stock {
+#seller-profile .product-stock {
   font-size: 14px;
   color: #666;
 }
 
-.order-info {
+#seller-profile .order-info {
   font-size: 14px;
   color: #666;
 }
 
-.order-id {
+#seller-profile .order-id {
   font-weight: bold;
 }
 
-.total-amount {
+#seller-profile .total-amount {
   font-weight: bold;
   color: #1a73e8;
 }
 
-.edit{
+#seller-profile .edit{
 text-decoration: none;
 }

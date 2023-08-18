@@ -137,3 +137,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # rzp_test_mjCP3S42mj6Djs,oFWPENrtRlbZnKWxEHeUCZup
 KEY_ID = config('KEY_ID')
 KEY_SECRET = config('KEY_SECRET')
+
+TIME_ZONE = 'Asia/Kolkata'

@@ -75,6 +75,63 @@ button[type="submit"]:hover {
 }
 
 
+/* checkout.css */
+/* Add your own custom styling */
+
+.container {
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.product-image {
+  max-width: 50px;
+  max-height: 50px;
+  margin-right: 10px;
+}
+
+.list-group {
+  margin-bottom: 20px;
+}
+
+.shipping p {
+  font-weight: bold;
+  margin: 0;
+}
+
+.total-amount {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+#rzp-button1 {
+  margin-top: 20px;
+}
+
+/* Styling for the address choice dropdown */
+#address_choice {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+/* Styling for the new address fields */
+#address_choice option[value="new"] {
+  font-weight: bold;
+}
+
+
+
+
 /* Responsive adjustments */
 
 /* Tablets */

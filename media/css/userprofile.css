@@ -70,8 +70,24 @@ body, ul{
 a:hover {
     text-decoration: underline;
 } */
-ul li{
+.pending-status {
+    color: red;
+    font-weight: bold;
+}
+
+/* Styles for completed status */
+.completed-status {
+    color: green;
+    font-weight: bold;
+}
+#user-order ul li{
     margin-bottom: 15px;
+    width: 400px;
+    height: auto;
+    background-color: #f0f0f0;
+}
+#user-total{
+    font-size: 1.2rem;
 }
 @media (max-width: 767px){
     .container {

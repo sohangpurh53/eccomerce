@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User,  Product, ShippingAddress, Review
+from .models import User,  Product, ShippingAddress, Review, AboutUs
 from django.contrib.auth.forms import AuthenticationForm
 
 class SellerRegistrationForm(UserCreationForm):
@@ -45,4 +45,8 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = ['rating', 'comment']
-   
+
+class AboutUsForm(forms.ModelForm):
+    class Meta:
+        model = AboutUs
+        fields = ['description']
