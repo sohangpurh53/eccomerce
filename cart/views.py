@@ -301,6 +301,7 @@ def checkout(request):
     
     
     
+    
 
     shipping_fee = 0
     total_amount = sum(item.product.price * item.quantity + shipping_fee for item in cart_items)
@@ -494,3 +495,4 @@ def about_us(request):
     # Retrieve the AboutUs instance for the logged-in seller
     about_us = AboutUs.objects.last()   
     return render(request, 'about_us.html', {'about_us': about_us})
+

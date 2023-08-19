@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 from django.db import models
@@ -36,16 +36,12 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        # Update remaining stock when the product is saved or updated
-        if not self.id:
-            # For a new product, set remaining stock to initial stock
-            self.stock = self.initial_stock
+    def reduce_stock(self, quantity):
+        if quantity <= self.stock:
+            self.stock -= quantity
+            self.save()
         else:
-            # For an existing product, calculate remaining stock
-            ordered_quantity = self.orderitem_set.aggregate(sum_quantity=models.Sum('quantity'))['sum_quantity'] or 0
-            self.stock = self.initial_stock - ordered_quantity
-        super(Product, self).save(*args, **kwargs)
+            raise ValueError("Insufficient stock")
 
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -85,32 +81,8 @@ class OrderItem(models.Model):
     
 
     def save(self, *args, **kwargs):
-        # Update the seller's stock when an order item is created or updated
-        if not self.id:
-            # For a new order item (new purchase), deduct the quantity from the seller's stock
-            self.product.initial_stock = self.product.initial_stock - self.quantity
-            self.product.save()
-        else:
-            # For an existing order item (update in quantity), handle the stock change accordingly
-            original_quantity = OrderItem.objects.get(id=self.id).quantity
-            if self.quantity > original_quantity:
-                # If quantity increased, reduce the additional quantity from the seller's stock
-                diff_quantity = self.quantity - original_quantity
-                self.product.initial_stock -= diff_quantity
-                self.product.save()
-            elif self.quantity < original_quantity:
-                # If quantity decreased, add the reduced quantity back to the seller's stock
-                diff_quantity = original_quantity - self.quantity
-                self.product.initial_stock += diff_quantity
-                self.product.save()
-
-        super(OrderItem, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        # Update the seller's stock when an order item is deleted
-        self.product.initial_stock += self.quantity
-        self.product.save()
-        super(OrderItem, self).delete(*args, **kwargs)
+        super().save(*args, **kwargs)
+        self.product.reduce_stock(self.quantity)
 
 
 
