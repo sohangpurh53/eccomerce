@@ -5,9 +5,22 @@
 <div class="container">
     <h1>Checkout</h1>
     <div class="row">
+      
         <div class="col-md-8">
-            <form method="post" action="{% url 'checkout' %}">
-                {% csrf_token %}
+            <h3>Select Shipping Address:</h3>
+            <div id="address_choice">
+                <input type="radio" id="new_address" name="address_choice" value="new" checked>
+                <label for="new_address">Enter a new address</label>
+                {% if old_shipping_addresses %}
+                    {% for address in old_shipping_addresses %}
+                        <input type="radio" id="address_{{ address.id }}" name="address_choice" value="{{ address.id }}">
+                        <label for="address_{{ address.id }}">{{ address.address }}, {{ address.city }}, {{ address.state }}</label><br>
+                    {% endfor %}
+                {% else %}
+                    <p>You don't have any saved addresses.</p>
+                {% endif %}
+            </div>
+            <div id="new_address_fields">
                 <div class="form-group">
                     <label for="address">Address</label>
                     <input type="text" class="form-control" id="address" name="address" required>
@@ -28,31 +41,36 @@
                     <label for="postal_code">Postal Code</label>
                     <input type="text" class="form-control" id="postal_code" name="postal_code" required>
                 </div>
-                <div class="col-md-4">
-                    <h4>Order Summary</h4>
-                    <ul class="list-group">
-                        {% for item in cart_items %}
-                        <li class="list-group-item">
-                            <img class="product-image" src="{{ item.product.image.url }}" alt="">
-                            {{ item.product.name }} - {{ item.quantity }} x &#8377;{{ item.product.price }}
-                        </li>
-                        {% endfor %}
-                        {% if not shipping_fee %}
-                        <li class="shipping">
-                            <p>Shipping Fee: Free</p>
-                        </li>
-                        {% else %}
-                        <li class="shipping">
-                            <p>Shipping Fee: &#8377;{{ shipping_fee }}</p>
-                        </li>
-                        {% endif %}
-                    </ul>
-                    <h5 class="total-amount">Total Amount: &#8377;{{ cart_total }}</h5>
-                    <button type="submit" id="rzp-button1" class="btn btn-primary">Place your order</button>
-                    <!-- Razorpay payment form -->
-                    
-                </div>
-
+            </div>
+            <div class="col-md-4">
+                <h4>Order Summary</h4>
+                <ul class="list-group">
+                    {% for item in cart_items %}
+                    <li class="list-group-item">
+                        <img class="product-image" src="{{ item.product.image.url }}" alt="">
+                        {{ item.product.name }} - {{ item.quantity }} x &#8377;{{ item.product.price }}
+                    </li>
+                    {% endfor %}
+                    {% if not shipping_fee %}
+                    <li class="shipping">
+                        <p>Shipping Fee: Free</p>
+                    </li>
+                    {% else %}
+                    <li class="shipping">
+                        <p>Shipping Fee: &#8377;{{ shipping_fee }}</p>
+                    </li>
+                    {% endif %}
+                </ul>
+                <h5 class="total-amount">Total Amount: &#8377;{{ cart_total }}</h5>
+            <form id="checkout_form" method="post" action="{% url 'checkout' %}">
+                {% csrf_token %}
+                <!-- Rest of your form content here -->
+                <input type="radio" id="new_address" name="address_choice" value="new" checked>
+                <!-- Saved addresses radio buttons -->
+                {% for address in old_shipping_addresses %}
+                    <input type="radio" id="address_{{ address.id }}" name="address_choice" value="{{ address.id }}">
+                {% endfor %}
+                <button type="submit" id="rzp-button1" class="btn btn-primary">Place your order</button>
             </form>
         </div>
     </div>
@@ -61,7 +79,7 @@
 <script>
 var options = {
     "key": "{{razorpay_key}}", // Enter the Key ID generated from the Dashboard
-    "amount": "{{cart_total}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "amount": "{{total_amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     "currency": "INR",
     "name": "Lulu-Collection53",
     "description": "Test Transaction",
@@ -83,10 +101,6 @@ rzp1.on('payment.failed', function (response){
     window.location.href = window.location.href = `/failure/?error_code=${response.error.code}&error_description=${response.error.description}`;
        
 });
-// document.getElementById('rzp-button1').onclick = function(e){
-//     rzp1.open();
-//     e.preventDefault();
-// }
 
 var rzp2 = new Razorpay(options);
 
@@ -98,5 +112,25 @@ document.getElementById('rzp-button1').onclick = function(e){
 
 // Automatically trigger Razorpay form submission when the page loads
 rzp2.open();
+
+var rzp = new Razorpay(options);
+
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp.open();
+    e.preventDefault();
+    return false; // Prevent form submission
+}
+
+// Handle address choice
+const addressChoice = document.getElementById('address_choice');
+const newAddressFields = document.getElementById('new_address_fields');
+
+addressChoice.addEventListener('change', function() {
+    if (document.getElementById('new_address').checked) {
+        newAddressFields.style.display = 'block';
+    } else {
+        newAddressFields.style.display = 'none';
+    }
+});
 </script>
 {% endblock %}

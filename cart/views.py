@@ -10,6 +10,8 @@ from django.contrib import messages
 import razorpay
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 # Create your views here.
 
 #homepage display all product
@@ -167,6 +169,7 @@ def categories_product(request):
 #cartpage
 @login_required(login_url='signin')
 def cart_view(request):
+    
     try:
         # Get the user's cart
         cart = Cart.objects.get(user=request.user)
@@ -176,21 +179,24 @@ def cart_view(request):
         cart = Cart.objects.create(user=request.user)
         cart_items = []
     
-    # Calculate the subtotal
-    subtotal = sum(item.product.price * item.quantity for item in cart_items)
+    # Calculate the subtotal and total shipping fees
+    subtotal = 0
+    total_shipping_fee = 0
+    for item in cart_items:
+        item_total_price = item.product.price * item.quantity
+        subtotal += item_total_price
+        total_shipping_fee += item.product.shipping_fee * item.quantity
     
     # Calculate the total amount including shipping fees
-    shipping_fee = 50
-    if subtotal > 599:
-        shipping_fee = 0  # Free shipping
-    total_amount = subtotal + shipping_fee
+    total_amount = subtotal + total_shipping_fee
 
     context = {
         'cart': cart,
         'cart_items': cart_items,
         'subtotal': subtotal,
-        'shipping_fee': shipping_fee,
-        'total_amount': total_amount
+        'shipping_fee': total_shipping_fee,
+        'total_amount': total_amount,
+       
     }
 
 
@@ -209,6 +215,8 @@ def signup(request):
         form = SignupForm()
 
     return render(request, 'signup.html', {'form': form})
+
+
 
 
 #user authentication Signin page
@@ -298,79 +306,76 @@ def checkout(request):
     user = request.user
     cart = Cart.objects.get(user=user)
     cart_items = CartItem.objects.filter(cart=cart)
+    old_shipping_addresses = ShippingAddress.objects.filter(user=request.user)
+    created_at = request.POST.get('created_at')
     
     
-    
-    
-
-    shipping_fee = 0
-    total_amount = sum(item.product.price * item.quantity + shipping_fee for item in cart_items)
-
-    if total_amount <= 599:
-        shipping_fee = 50
-        total_amount = sum(item.product.price * item.quantity + shipping_fee for item in cart_items)
-
     if request.method == 'POST':
-        address = request.POST.get('address')
-        city = request.POST.get('city')
-        state = request.POST.get('state')
-        country = request.POST.get('country')
-        postal_code = request.POST.get('postal_code')
-        created_at = request.POST.get('created_at')
+        address_choice = request.POST.get('address_choice')
+
+        if address_choice == 'new':
+            # Retrieve new address data from the form
+            address = request.POST.get('address')
+            city = request.POST.get('city')
+            state = request.POST.get('state')
+            country = request.POST.get('country')
+            postal_code = request.POST.get('postal_code')
+
+            # Create a new ShippingAddress instance
+            if address and city and state and country and postal_code:
+             shipping_address = ShippingAddress.objects.get_or_create(
+                user=user,
+                address=address,
+                city=city,
+                state=state,
+                country=country,
+                postal_code=postal_code
+            )
+        else:
+            # Retrieve the selected saved address
+            chosen_address = ShippingAddress.objects.get(id=int(address_choice))
+            shipping_address = chosen_address
+        
+        # Calculate total amount, create order, and save order items
+        subtotal = 0
+        total_shipping_fee = 0
+        for item in cart_items:
+            item_total_price = item.product.price * item.quantity
+            subtotal += item_total_price
+            total_shipping_fee += item.product.shipping_fee * item.quantity
+        total_amount = subtotal + total_shipping_fee
+
         
 
-        shipping_address = ShippingAddress.objects.create(
-            user=user,
-            address=address,
-            city=city,
-            state=state,
-            country=country,
-            postal_code=postal_code
-        )
-
+        
+        
+        # Razorpay payment integration
         client = razorpay.Client(auth=(settings.KEY_ID, settings.KEY_SECRET))
         razorpay_order = client.order.create({
             'amount': int(total_amount * 100),
             'currency': 'INR',
             'payment_capture': 1,
         })
-       
-        order = Order(user=user, created_at=created_at, total_amount=total_amount, razor_pay_order_id=razorpay_order['id'])
-        order.save()
-
-        
-
-        
-
-        # Save order items and update product stocks
+        order = Order.objects.create(
+                    user=user, created_at=created_at, total_amount=total_amount, razor_pay_order_id=razorpay_order['id']
+                )
         for cart_item in cart_items:
-            order_item = OrderItem.objects.create(
+            OrderItem.objects.create(
                 order=order,
                 product=cart_item.product,
                 quantity=cart_item.quantity
             )
-            # Update the product's initial stock
-            
-
-            #empty cart item after order
-            
-
-        
-
         context = {
-            'cart_items': cart_items,
-            'cart_total': total_amount,
-            'shipping_fee': shipping_fee,
-            'currency': 'INR',
             'razorpay_key': settings.KEY_ID,
-            'razorpay_order_id': razorpay_order['id'],
-
+            'razorpay_order_id': razorpay_order['id']
         }
-
-        # Redirect to Razorpay payment page
         return render(request, 'checkout.html', context)
-
-    return render(request, 'checkout.html', {'cart_items': cart_items})
+    
+    context = {
+        'cart_items': cart_items,
+        'old_shipping_addresses': old_shipping_addresses
+    }
+    return render(request, 'checkout.html', context)
 
 
 #order success page
@@ -380,21 +385,43 @@ def payment_success(request):
     order_id = request.GET.get('razorpay_order_id')
     payment_signature = request.GET.get('razorpay_signature')
     
+    order = Order.objects.get(razor_pay_order_id=order_id)
     
+    # Check if the email has already been sent for this order in the session
+    if not request.session.get('order_email_sent_{}'.format(order.id), False):
+        # Save payment information in your Order model
+        order.razor_pay_payment_id = payment_id
+        order.razor_pay_payment_signature = payment_signature
+        order.is_paid = True  # Update the order status
+        order.save()
 
-    # Save payment information in your Order model
-    order = Order.objects.get(razor_pay_order_id=order_id)
-    order.razor_pay_payment_id = payment_id
-    order.razor_pay_payment_signature = payment_signature
-    order.is_paid = True  # Update the order status
-    order.save()
+        # Retrieve order items for the email template
+        order_items = OrderItem.objects.filter(order=order)
 
-    if order.is_paid == True:
-     cart_item = CartItem.objects.all()
-     cart_item.delete()
-    order = Order.objects.get(razor_pay_order_id=order_id)
+        # Send an order confirmation email to the user
+        subject = 'Order Confirmation'
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [request.user.email]
+        html_message = render_to_string('orderconfirmationemail.html', {'user': request.user, 'order_items': order_items, 'order': order})
+        send_mail(subject, '', from_email, recipient_list, fail_silently=False, html_message=html_message)
 
-    return render(request, 'success.html', {'payment_id':payment_id, 'order_id':order_id})
+        # Send order confirmation email to sellers
+        for sellerorder in order_items:
+            seller_subject = 'New Order Received'
+            seller_from_email = settings.EMAIL_HOST_USER  
+            seller_recipient_list = [sellerorder.product.seller.user.email]  
+            seller_html_message = render_to_string('sellerorderconfirmation.html', {'seller': sellerorder.product.seller, 'order_items': order_items, 'order': order})
+            send_mail(seller_subject, '', seller_from_email, seller_recipient_list, fail_silently=False, html_message=seller_html_message)
+
+        # Mark that the email has been sent for this order in the session
+        request.session['order_email_sent_{}'.format(order.id)] = True
+    
+    # Clear cart items if the order is paid
+    if order.is_paid:
+        cart_items = CartItem.objects.all()
+        cart_items.delete()
+    
+    return render(request, 'success.html', {'payment_id': payment_id, 'order_id': order_id})
 
 
 #order failure page

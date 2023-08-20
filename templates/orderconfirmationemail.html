@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        /* Add your CSS styling here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 150px;
+            height: auto;
+        }
+        .message {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+        .order-details {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .order-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            background-color: #ffffff;
+            border-radius: 5px;
+        }
+        .item-name {
+            font-weight: bold;
+        }
+        .item-price {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #777777;
+        }
+
+        #order-confirm-product-image{
+            width: 50px;
+            height: auto;
+        }
+        .item-orderid{
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://example.com/images/logo.png" alt="Logo" class="logo">
+            <h1>Order Confirmation</h1>
+        </div>
+        <p class="message">Dear {{ user.username }},</p>
+        <p class="message">Thank you for your order with us. Here are the details of your order:</p>
+        
+        <div class="order-details">
+            {% for item in order_items %}
+            <div class="order-item">
+                <p class="item-name">{{ item.product.name }}</p>
+                <img src="{{ item.product.image.url }}" alt="Product 1">
+                <p class="item-price">Price: {{ item.product.price }} INR</p>
+                <p>Quantity: {{ item.quantity }}</p>
+            </div>
+            <p class="item-orderid">Order ID: {{order.razor_pay_order_id}}</p>
+            {% endfor %}
+            <p class="item-price">Total Amount: {{ order.total_amount }} INR</p>
+        </div>
+        
+        <p class="message">Your payment was successful. We will process your order and provide shipping details soon.</p>
+        
+        <p class="footer">For any inquiries, please <a href="mailto:info@example.com">contact us</a>.</p>
+        <p class="footer">Thank you for shopping with us!</p>
+    </div>
+</body>
+</html>
