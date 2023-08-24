@@ -27,12 +27,12 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
-    shipping_fee = models.DecimalField(max_digits=8, decimal_places=2, default=False)
+    shipping_fee = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     initial_stock = models.PositiveIntegerField(default=0)  # Add initial stock field
     stock = models.PositiveIntegerField(default=0)  # Add remaining stock field
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='product_images')
+    
 
     def __str__(self):
         return self.name
@@ -43,6 +43,13 @@ class Product(models.Model):
             self.save()
         else:
             raise ValueError("Insufficient stock")
+        
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='product_images')
+
+    def __str__(self):
+        return self.product.name
 
 
 class Cart(models.Model):

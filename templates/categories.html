@@ -5,9 +5,9 @@
 {% for category in categories %}
     <h2>{{ category.name }}</h2>
     <ol>
-        {% for product in products %}
-            {% if product.category == category %}
-           <a href="{% url 'productpage' product_id=product.id %}">  <li> <img src="{{ product.image.url }}" alt=""><p>{{ product.name }}</p> </li></a>
+       {% for products in product_detail %}  
+            {% if products.product.category == category %}
+          <a href="{% url 'productpage' product_id=products.product.id %}"> <li> <img src="{{ products.image_url }}" alt=""><p>{{ products.product.name }}</p> </li></a>
             
             {% endif %}
         {% endfor %}

@@ -5,10 +5,10 @@
   
   <div class="container">
     <h4>Update Product</h4>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Update">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}  <!-- This renders all fields as paragraphs -->
+      <input type="submit" value="Update">
   </form>
 </div>
 {% endblock %}

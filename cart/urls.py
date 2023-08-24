@@ -25,6 +25,7 @@ urlpatterns = [
     path('product/<int:product_id>/edit_review/<int:review_id>/', views.edit_review, name='edit_review'),
     path('about-us-form/', views.edit_about_us, name='edit_about_us'),
      path('about-us/', views.about_us, name='about_us'),
+     path('product/image/<int:product_id>/', views.product_image, name='product_image')
     
  
     

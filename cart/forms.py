@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User,  Product, ShippingAddress, Review, AboutUs
+from .models import User,  Product, ShippingAddress, Review, AboutUs, ProductImage
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -23,8 +23,14 @@ class SellerRegistrationForm(UserCreationForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price', 'initial_stock', 'category', 'image']
+        fields = ['name', 'description', 'price', 'shipping_fee' ,'initial_stock', 'stock' ,'category']
 
+
+class ProductImageForm(forms.ModelForm):
+    class Meta:
+        model = ProductImage
+        fields = ['image']
+        
 
 class SignupForm(UserCreationForm):
     email = forms.EmailField()
@@ -78,3 +84,4 @@ class AboutUsForm(forms.ModelForm):
     class Meta:
         model = AboutUs
         fields = ['description']
+

@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Order, OrderItem, Product, Category,Seller, Cart, CartItem, ShippingAddress,Review, AboutUs
-from .forms import SellerRegistrationForm, ProductForm, SignupForm,LoginForm, ShippingAddressForm, ReviewForm, AboutUsForm
+from .models import Order, OrderItem, Product, Category,Seller, Cart, CartItem, ShippingAddress,Review, AboutUs, ProductImage
+from .forms import SellerRegistrationForm, ProductForm, SignupForm,LoginForm, ShippingAddressForm, ReviewForm, AboutUsForm, ProductImageForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -17,6 +17,21 @@ from django.template.loader import render_to_string
 #homepage display all product
 def Homepage(request):
     products = Product.objects.all()
+
+    product_data = []
+    for product in products:
+        # Retrieve a single image for each product
+        try:
+            product_image = ProductImage.objects.filter(product=product).first()
+            image_url = product_image.image.url if product_image else None
+        except ProductImage.DoesNotExist:
+            image_url = None
+
+        product_data.append({
+            'product': product,
+            'image_url': image_url,
+        })
+    
     sort = request.GET.get('sort', 'name')  # Default sorting by product name
     if sort == 'name':
         products = Product.objects.order_by('name')
@@ -24,12 +39,14 @@ def Homepage(request):
         products = Product.objects.order_by('price')
     elif sort == 'price_high':
         products = Product.objects.order_by('-price')
-    return render(request, 'homepage.html', {'products':products, 'sort':sort})
+    return render(request, 'homepage.html', {'product_data': product_data,  'sort':sort})
 
 
 #display single product and review
 def productpage(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    product_images = ProductImage.objects.filter(product=product)
+    
     reviews = Review.objects.filter(product=product)
     user_has_reviewed = False  # Flag to track if the current user has already reviewed the product
 
@@ -51,7 +68,7 @@ def productpage(request, product_id):
        
     else:
             form = ReviewForm()    
-    return render(request, 'product.html', {'product':product, 'reviews':reviews, 'form':form, 'user_has_reviewed': user_has_reviewed})
+    return render(request, 'product.html', {'product':product, 'reviews':reviews, 'form':form, 'user_has_reviewed': user_has_reviewed, 'product_images':product_images})
 
 
 
@@ -70,27 +87,58 @@ def seller_dashboard(request):
             name = request.POST.get('product_name')
             description = request.POST.get('product_description')
             price = request.POST.get('product_price')
+            shipping_fee = request.POST.get('shipping_fee')
             initial_stock = request.POST.get('initial_stock')
+            stock = request.POST.get('stock')
             category_id = request.POST.get('product_category')
-            image = request.FILES.get('product_image')
+            
             
             category = Category.objects.get(id=category_id)
             seller = request.user.seller
             
-            Product.objects.create(name=name, description=description, price=price, initial_stock=initial_stock,
-                                   category=category, seller=seller, image=image)
+            Product.objects.create(name=name, description=description, price=price, shipping_fee=shipping_fee, initial_stock=initial_stock, stock=stock,
+                                   category=category, seller=seller)
+             
+            
+        
+            
             return redirect('seller_dashboard')
-
+           
+   
     # Retrieve products and categories for the current seller
+    
     seller = request.user.seller
     products = Product.objects.filter(seller=seller)
     categories = Category.objects.all()
+    product_data = []
+    for product in products:
+        # Retrieve a single image for each product
+        try:
+            product_image = ProductImage.objects.filter(product=product).first()
+            image_url = product_image.image.url if product_image else None
+        except ProductImage.DoesNotExist:
+            image_url = None
+
+        product_data.append({
+            'product': product,
+            'image_url': image_url,
+        })
+        
+    
+    
+   
 
     context = {
         'products': products,
-        'categories': categories
+        'categories': categories,
+        'product_data': product_data,
+        
+     
+        
     }
     return render(request, 'seller_dashboard.html', context)
+
+
 
 
 
@@ -140,27 +188,69 @@ def seller_login(request):
 #seller (poduct edit page)
 @login_required(login_url='seller_login')
 def seller_editproduct(request, product_id):
-    products = get_object_or_404(Product, id=product_id)
-
-    
+    product = get_object_or_404(Product, pk=product_id)
     if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES, instance=products)
+        form = ProductForm(request.POST, instance=product)
         if form.is_valid():
             form.save()
             return redirect('seller_dashboard')
-            
     else:
-        form = ProductForm(instance=products)
-        return render(request, 'seller_editproduct.html', {'form':form})
+        form = ProductForm(instance=product)
+    
+    context = {'form': form, 'product': product}
+
+    return render(request, 'seller_editproduct.html', context)
+
+
+def product_image(request, product_id):
+    product = Product.objects.get(pk=product_id)
+
+    if request.method == 'POST':
+        form = ProductImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            image = form.cleaned_data['image']
+            product_image = ProductImage(product=product, image=image)
+            product_image.save()
+            messages.success(request, 'Product image added successfully.')
+            return redirect('product_image', product_id=product_id)
+    else:
+        form = ProductImageForm()
+
+    context = {
+        'product': product,
+        'form': form,
+    }
+    return render(request, 'product_image.html', context)
     
 
 #categories page 
 def categories_product(request):
     categories = Category.objects.all()
     products = Product.objects.all()
+
+    product_data = []
+    for product in products:
+        # Retrieve a single image for each product
+        try:
+            product_image = ProductImage.objects.filter(product=product).first()
+            image_url = product_image.image.url if product_image else None
+        except ProductImage.DoesNotExist:
+            image_url = None
+
+        product_data.append({
+            'product': product,
+            'image_url': image_url,
+        })
+        
+        product_detail = product_data
+        print(product_detail)
+
+
+    
     context = {
         'categories': categories,
-        'products': products
+        'products': products,
+        'product_detail':product_detail,
     }
     return render(request, 'categories.html', context)
 
@@ -397,6 +487,14 @@ def payment_success(request):
 
         # Retrieve order items for the email template
         order_items = OrderItem.objects.filter(order=order)
+
+
+        email_context = {
+        'user': request.user,
+        'order_items': order_items,
+        'order': order,
+        'request': request,  # Pass the request object
+    }
 
         # Send an order confirmation email to the user
         subject = 'Order Confirmation'

@@ -21,18 +21,16 @@
     <option value="price_high" {% if sort == 'price_high' %}selected{% endif %}>Price High to Low</option>
   </select></div>
   <div class="container">
-    {% for product in products %}    
-     <a href="{% url 'productpage' product_id=product.id %}">
-       <div class="product-card">
-        <img src="{{ product.image.url }}" alt="Product 1">
-        <div class="title-container"> <h3>{{ product.name }}</h3></div>
-        <!-- <p>{{ product.description }}</p> -->
-        <p class="price">&#8377;{{ product.price }}</p>
-      
-      </div>
+    {% for data in product_data %}
+    <a href="{% url 'productpage' product_id=data.product.id %}">
+        <div class="product-card">
+          {% if data.image_url %}  <img src="{{ data.image_url }}" alt="{{ data.product.name }}"> {% endif %}
+            <div class="title-container"> <h3>{{ data.product.name }}</h3></div>
+            <p class="price">&#8377;{{ data.product.price }}</p>
+        </div>
     </a>
     {% endfor %}
-  </div>
+</div>
 </body>
 <script>
   function changeSort() {

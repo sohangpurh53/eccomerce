@@ -20,7 +20,7 @@ body {
 }
 
 .product-image img {
-  max-width: 100%;
+  max-width: 400px;
   height: auto;
 }
 
@@ -60,8 +60,12 @@ body {
   margin-right: 10px;
 }
 
-.buy-now-button {
-  background-color: #28a745;
+.add-to-cart-button:hover,
+.buy-now-button:hover {
+  background-color: #0056b3;
+  text-decoration: none;
+  color: white;
+  
 }
 
 /* Reviews Section */
@@ -123,6 +127,7 @@ body {
   border-radius: 5px;
   padding: 10px 20px;
   cursor: pointer;
+  
 }
 .star{
   color: gold;
@@ -143,6 +148,8 @@ body {
 
 .edit-review-button:hover {
   background-color: #0056b3;
+  text-decoration: none;
+  color: white;
 }
 
 
@@ -164,6 +171,7 @@ form {
   padding: 15px;
   margin-bottom: 50px;
   margin-top: 50px;
+  
 
 
 }
@@ -172,6 +180,7 @@ form {
   margin-bottom: 10px;
   resize: vertical;
   padding: 10px;
+  
   
 }
 
@@ -195,3 +204,103 @@ h3{
 text-align: center;
 color: #28a745;
 }
+
+#carousel-inner {
+    position: relative;
+    border-radius: 10px;
+    max-height: max-content; 
+    
+}
+
+.carousel-item {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    
+     
+}
+
+.carousel-item img {
+    max-width: 400px;
+    max-height: auto; 
+    margin: 0 auto; 
+    
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  color: white;
+  transition: background-color 0.3s ease;
+  margin-top: auto;
+}
+
+
+
+
+@media (max-width: 767px) {
+  /* Adjust container and padding for smaller screens */
+  .container {
+    padding: 10px;
+  }
+
+  /* Adjust product details layout for smaller screens */
+  .product-details {
+    flex-direction: column;
+  }
+
+  /* Adjust product image size for smaller screens */
+  .product-image img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Adjust product info padding for smaller screens */
+  .product-info {
+    padding-left: 10px;
+  }
+
+  /* Adjust review container for smaller screens */
+  .reviewcontainer {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 30px;
+    margin-top: 30px;
+  }
+
+  /* Adjust font sizes for smaller screens */
+  h1 {
+    font-size: 20px;
+  }
+
+  .product-title {
+    font-size: 20px;
+  }
+
+  .product-description {
+    font-size: 16px;
+  }
+
+  /* Adjust carousel image size for smaller screens */
+  .carousel-item img {
+    max-width: 50%;
+    height:auto;
+  }
+.carousel-control-prev,
+.carousel-control-next {
+  margin-top: auto;
+}
+
+
+#imageCarousel {
+  position: relative;
+  z-index: 1; 
+}
+
+
+}
+

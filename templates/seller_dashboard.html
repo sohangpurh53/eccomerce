@@ -34,8 +34,14 @@
     <label for="product_price">Price:</label>
     <input type="number" id="product_price" name="product_price" required>
     <br>
-    <label for="initial_stock">Stock:</label>
-    <input type="number" id="initial_stock" name="initial_stock" required>
+    <label for="shipping_fee">Shipping Fee:</label>
+    <input type="number" id="shipping_fee" name="shipping_fee" required>
+    <br>
+    <label for="initial_stock">Initial Stock:</label>
+    <input type="number" id="stock" name="initial_stock" required>
+    <br>
+    <label for="stock">Stock:</label>
+    <input type="number" id="stock" name="stock" required>
     <br>
     <label for="product_category">Category:</label>
     <select id="product_category" name="product_category" required>
@@ -44,21 +50,30 @@
       {% endfor %}
     </select>
     <br>
-    <label for="product_image">Image:</label>
-    <input type="file" id="product_image" name="product_image" required>
-    <br>
     <input type="submit" name="add_product" value="Add Product">
+  </form>
+  <form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <!-- <label for="product_image">Image:</label>
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+    <input type="file" id="product_image" name="product_image" required>-->
+    
+    <!-- <input type="submit" name="add_product_image" value="Add Product Image">  -->
+    <br>
   </form>
 </div>
   <!-- List of Products -->
  <div class="container-productlist"> <h3>Your Products</h3>
   <ol>
-    {% for product in products %}
-   <li> <img class="productlist" src="{{product.image.url}}" alt="">
-      Item Name: {{ product.name }}</li>
-      <a class="edit" target="_blank" href="{% url 'seller_editproduct' product_id=product.id %}">Update</a>
+    {% for data in product_data %}
+    
+   <li> <img class="productlist" src="{{data.image_url }}" alt=""></li>
+    
+      Item Name: {{ data.product.name }}</li>
+      <a class="edit" target="_blank" href="{% url 'seller_editproduct' product_id=data.product.id %}">Update</a>
     {% empty %}
       <li>No products available.</li>
     {% endfor %}
+   
   </ol></div>
 {% endblock %}

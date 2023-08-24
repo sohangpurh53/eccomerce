@@ -44,9 +44,9 @@
 <body>
 
 <nav class="navbar">
-    <a class="logo" href="{% url 'Homepage' %}"> Logo</a>
+    <a  href="{% url 'Homepage' %}"> <img class="logo"src="/logo.png" alt=""></a>
     <div class="search-container">
-        <input type="text" class="search-box" placeholder="Search">
+        <input type="text" id="search-box" class="search-box" placeholder="Search">
         <button class="search-button">
             <i class="fa fa-search"></i>
         </button>
@@ -66,7 +66,7 @@
     <ul class="nav-links">
         <li><a href="{% url 'Homepage' %}"><i class="fa fa-home"></i> Home</a></li>
         <li><a href="{% url 'categories_product' %}">Categories</a></li>
-        <li><a class="nav-link" href="{% url 'cart_view' %}"><i class="fas fa-shopping-cart"></i> Cart</a></li>
+        <li><a  href="{% url 'cart_view' %}"><i class="fas fa-shopping-cart"></i> Cart</a></li>
         <li><a href="#"><i class="fa fa-thin fa-address-book"></i> Contact</a></li>
         {% if user.is_authenticated %}
         <li><a href="{% url 'signout' %}">SignOut <i class="fas fa-sign-out-alt"></i></a></li>
@@ -109,6 +109,8 @@
         closeIcon.style.display = navbar.classList.contains("active") ? "block" : "none";
         
         })
+
+  
 </script>
 
 

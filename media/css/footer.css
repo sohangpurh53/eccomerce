@@ -3,14 +3,8 @@
 .footer {
   background-color: #f5f5f5;
   padding: 10px 0;
-  bottom: 0;
-  position: relative;
- 
-  
 
-
-
-}
+ }
 
 .footer-container {
   
@@ -29,7 +23,7 @@
 }
 
 .footer-logo img {
-  height: 50px;
+  height: 40px;
   width: auto;
 }
 
