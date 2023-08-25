@@ -113,7 +113,10 @@ h2{
   color: rgb(57, 210, 57);
 }
 
-
+.button-edit-add{
+display: flex;
+gap: 10px;
+}
 @media (max-width: 767px){
   .container {
     max-width: 300px;
@@ -131,4 +134,5 @@ h2{
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+  
 }

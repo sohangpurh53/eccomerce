@@ -70,7 +70,8 @@
    <li> <img class="productlist" src="{{data.image_url }}" alt=""></li>
     
       Item Name: {{ data.product.name }}</li>
-      <a class="edit" target="_blank" href="{% url 'seller_editproduct' product_id=data.product.id %}">Update</a>
+  <div class="button-edit-add">   <a class="edit" target="_blank" href="{% url 'seller_editproduct' product_id=data.product.id %}"><i class="fa-regular fa-pen-to-square"></i>Update</a>
+      <a class="edit"  href="{% url 'product_image' product_id=data.product.id %}"><i class="fa-regular fa-image "></i>Add-Images</a></div> 
     {% empty %}
       <li>No products available.</li>
     {% endfor %}

@@ -15,7 +15,8 @@
                 </div>
                 <div class="product-description">{{ product.description }}</div>
                 <div>Price: &#8377;{{ product.price }}</div>
-                <a class="edit" target="_blank" href="{% url 'seller_editproduct' product_id=product.id %}">Edit Product</a>
+                <a class="edit" target="_blank" href="{% url 'seller_editproduct' product_id=product.id %}"><i class="fa-regular fa-pen-to-square"></i>Edit Product</a> 
+                <a class="edit" href="{% url 'product_image' product_id=product.id %}"><i class="fa-regular fa-image"></i>Add-Images</a>
             </li>
         {% endfor %}
     </ul>

@@ -243,7 +243,7 @@ def categories_product(request):
         })
         
         product_detail = product_data
-        print(product_detail)
+        
 
 
     
@@ -264,6 +264,11 @@ def cart_view(request):
         # Get the user's cart
         cart = Cart.objects.get(user=request.user)
         cart_items = CartItem.objects.filter(cart=cart)
+
+        
+        
+        
+        
     except Cart.DoesNotExist:
         # If the cart does not exist, create a new one
         cart = Cart.objects.create(user=request.user)
@@ -279,13 +284,21 @@ def cart_view(request):
     
     # Calculate the total amount including shipping fees
     total_amount = subtotal + total_shipping_fee
+    cart_item_data = []
+    for item in cart_items:
+        product_image = ProductImage.objects.filter(product=item.product).first()
+        cart_item_data.append({
+            'cart_item': item,
+            'product_image': product_image
+        })
 
     context = {
         'cart': cart,
-        'cart_items': cart_items,
+        'cart_item_data':cart_item_data,
         'subtotal': subtotal,
         'shipping_fee': total_shipping_fee,
         'total_amount': total_amount,
+        
        
     }
 
@@ -421,11 +434,12 @@ def checkout(request):
                 country=country,
                 postal_code=postal_code
             )
+             
         else:
             # Retrieve the selected saved address
             chosen_address = ShippingAddress.objects.get(id=int(address_choice))
             shipping_address = chosen_address
-        
+            print(shipping_address)
         # Calculate total amount, create order, and save order items
         subtotal = 0
         total_shipping_fee = 0
@@ -455,15 +469,37 @@ def checkout(request):
                 product=cart_item.product,
                 quantity=cart_item.quantity
             )
+
+        
+           
         context = {
             'razorpay_key': settings.KEY_ID,
-            'razorpay_order_id': razorpay_order['id']
+            'razorpay_order_id': razorpay_order['id'],
+            
         }
         return render(request, 'checkout.html', context)
-    
+    cart_item_data = []
+    for item in cart_items:
+        product_image = ProductImage.objects.filter(product=item.product).first()
+        cart_item_data.append({
+            'cart_item': item,
+            'product_image': product_image
+        })
+
+    subtotal = 0
+    total_shipping_fee = 0
+    for item in cart_items:
+            item_total_price = item.product.price * item.quantity
+            subtotal += item_total_price
+            total_shipping_fee += item.product.shipping_fee * item.quantity
+    total_amount = subtotal + total_shipping_fee
     context = {
-        'cart_items': cart_items,
-        'old_shipping_addresses': old_shipping_addresses
+        'cart_items': cart_item_data,
+        'old_shipping_addresses': old_shipping_addresses,
+       'total_amount':total_amount,
+       'shipping_fee':total_shipping_fee,
+        
+        
     }
     return render(request, 'checkout.html', context)
 
