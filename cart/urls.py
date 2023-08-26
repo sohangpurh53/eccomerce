@@ -27,6 +27,9 @@ urlpatterns = [
      path('about-us/', views.about_us, name='about_us'),
      path('product/image/<int:product_id>/', views.product_image, name='product_image'),
       path('order/<int:order_id>/', views.order_detail_view, name='order_detail_view'),
+      path('shipping_address/<int:shipping_address_id>/', views.shipping_address_edit, name='shipping_address_edit'),
+    #   path('delete/address/<int:shipping_address_id>/', views.shipping_address_delete, name='shipping_address_delete'),
+      path('add/address/', views.create_shipping_address, name='create_shipping_address'),
     
  
     

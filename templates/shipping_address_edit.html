@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="/css/shipping_address_update.css">
+{% extends 'base.html' %}
+
+{% block content %}
+  
+
+{% if messages %}
+{% for message in messages %}
+ <p class="Address-message">{{message}}</p>
+{% endfor %}
+{% endif %}
+
+  <div class="container">
+    <h4>Update Address</h4>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}  <!-- This renders all fields as paragraphs -->
+      <input type="submit" value="Update">
+  </form>
+</div>
+{% endblock %}

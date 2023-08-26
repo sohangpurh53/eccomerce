@@ -583,10 +583,16 @@ def sellerprofile(request):
     # Get the orders that include the seller's products
    orders = OrderItem.objects.filter(product__seller=seller).order_by('-order__created_at')
 
+   
+  
+   
+
    context = {
         'seller': seller,
         'products': products,
         'orders': orders,
+       
+        
     }
 
    return render(request, 'sellerprofile.html', context)
@@ -598,6 +604,8 @@ def sellerprofile(request):
 def userprofile(request):
     user = request.user
     orders = Order.objects.filter(user=user)
+    shipping_address = ShippingAddress.objects.filter(user=user)
+    
     
     order_data = []
     for order in orders:
@@ -607,9 +615,9 @@ def userprofile(request):
             'order_items': order_items
         })
 
-    
+    context = {'user':user, 'order_data': order_data, 'shipping_address':shipping_address}
           
-    return render(request, 'userprofile.html', {'user':user, 'order_data': order_data})
+    return render(request, 'userprofile.html', context)
 
 
 
@@ -631,7 +639,7 @@ def edit_review(request, product_id, review_id):
 
 
 
-
+# changes in about us page/edit aboutus 
 @login_required(login_url='seller_login')
 def edit_about_us(request):
     # Check if the user is a seller
@@ -652,12 +660,18 @@ def edit_about_us(request):
     return render(request, 'edit_about_us.html', {'about_us': about_us})
 
 
+
+#display aboutus
 def about_us(request):
     # Retrieve the AboutUs instance for the logged-in seller
     about_us = AboutUs.objects.last()   
     return render(request, 'about_us.html', {'about_us': about_us})
 
 
+
+
+
+#display single order detail
 @login_required(login_url='signin')
 def order_detail_view(request, order_id):
     order = get_object_or_404(Order, id=order_id)
@@ -669,3 +683,55 @@ def order_detail_view(request, order_id):
     }
     
     return render(request, 'order_details.html', context)
+
+
+
+#edit shipping address
+@login_required(login_url='signin')
+def shipping_address_edit(request, shipping_address_id):
+    shipping_address = get_object_or_404(ShippingAddress, id=shipping_address_id)
+    form = ShippingAddressForm
+    if request.method=='POST':
+        form = ShippingAddressForm(request.POST, instance=shipping_address)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Address Updated Successfully')
+            return redirect('userprofile')
+    else:
+        form = ShippingAddressForm(instance=shipping_address)
+
+    context =  {'form':form}
+    return render(request, 'shipping_address_edit.html',context)
+
+
+
+#create new shipping address
+@login_required(login_url='signin')
+def create_shipping_address(request):
+      old_shipping_addresses = ShippingAddress.objects.filter(user=request.user)
+
+      if old_shipping_addresses:
+          messages.success(request, 'Same Address Already Exist')
+      if request.method=='POST':
+           user = request.user  # Assuming you're using Django's built-in User model
+           address = request.POST.get('address')
+           city = request.POST.get('city')
+           state = request.POST.get('state')
+           country = request.POST.get('country')
+           postal_code = request.POST.get('postal_code')  # Get the address data from the form
+
+        # Create a new shipping address record associated with the user
+           ShippingAddress.objects.get_or_create(user=user, address=address, city=city, state=state, country=country, postal_code=postal_code)
+           return redirect('userprofile')
+   
+      return render(request, 'form_shipping_address.html')
+        
+
+
+ #current not in use
+# @login_required(login_url='signin')
+# def shipping_address_delete(request, shipping_address_id):
+#     shipping_address = get_object_or_404(ShippingAddress, id=shipping_address_id)
+#     shipping_address.delete()
+#     messages.success(request, 'Address deleted successfully')
+#     return redirect('userprofile')

@@ -8,6 +8,12 @@
 {% extends 'base.html' %}
 {% block content %}
 <body>
+    {% if messages %}
+    {% for message in messages %}
+     <p class="Address-message">{{message}}</p>
+    {% endfor %}
+    {% endif %}
+
     <div class="container">
         <div class="profile-info">
             <h1>Welcome, {{ user.username }}!</h1>
@@ -15,6 +21,24 @@
             {% if user.email %} <p>Email: {{ user.email }}</p> {% endif %}
           {% if user.seller %}  <p>Company: {{ user.seller.company_name }}</p> <!-- If the user is a seller -->{% endif %}
         {{order_item.user}}
+        {% if shipping_address %}
+      {% for address in shipping_address %}   
+      <div class="address-section">
+        <h2>Shipping Address</h2>
+        <span><a  class="update-button" href="{% url 'shipping_address_edit' shipping_address_id=address.id %}">Edit Address</a></span>      
+        <p><strong>Address:</strong> {{ address.address }}</p>  
+        <p><strong>City:</strong> {{ address.city }}</p>
+        <p><strong>State:</strong> {{ address.state }}</p>
+        <p><strong>Country:</strong> {{ address.country }}</p>
+        <p><strong>Postal Code:</strong> {{ address.postal_code }}</p> 
+        
+        
+        <a  class="add-button" href="{% url 'create_shipping_address' %}">Add New</a>
+    </div>
+    {% endfor %}
+    {% else %}
+    <a class="add-button" href="{% url 'create_shipping_address' %}">Add New Address</a>
+    {% endif %}
         </div>
         <h4>Your Orders:</h4>
 
@@ -37,9 +61,11 @@
                                 {% endif %}
                             </p>
                             <p>{{order_entry.order.created_at}}</p>
+                             <a id="view-button"  href="{% url 'order_detail_view' order_id=order_item.order.id %}">View order</a>
                         </li>
-                        <a id="view-button"  href="{% url 'order_detail_view' order_id=order_item.order.id %}">View order</a>
-                    {% endfor %}
+                       
+                        
+                    {% endfor %} 
                 </ul>
              {% empty %}
             No Order yet.
