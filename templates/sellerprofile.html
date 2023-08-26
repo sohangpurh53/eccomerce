@@ -32,6 +32,8 @@
                 <div>Quantity: {{ order.quantity }}</div>
                 <div>Total Amount: &#8377;<span class="total-amount">{{ order.order.total_amount }}</span></div>
                 <div>Created At: {{ order.order.created_at }}</div>
+                <p>Address:{{order.order.shipping_address}}</p>
+                
                
             </li>
         {% endfor %}

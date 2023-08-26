@@ -33,11 +33,11 @@
         <p><strong>Postal Code:</strong> {{ address.postal_code }}</p> 
         
         
-        <a  class="add-button" href="{% url 'create_shipping_address' %}">Add New</a>
+      
     </div>
     {% endfor %}
     {% else %}
-    <a class="add-button" href="{% url 'create_shipping_address' %}">Add New Address</a>
+   
     {% endif %}
         </div>
         <h4>Your Orders:</h4>

@@ -77,6 +77,7 @@ class Order(models.Model):
     razor_pay_order_id = models.CharField(max_length=150, null=True, blank=True)
     razor_pay_payment_id = models.CharField(max_length=150, null=True, blank=True)
     razor_pay_payment_signature = models.CharField(max_length=150, null=True, blank=True)
+    shipping_address = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         return f"Order {self.id}"

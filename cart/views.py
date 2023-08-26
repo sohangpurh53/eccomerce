@@ -510,8 +510,23 @@ def payment_success(request):
     payment_id = request.GET.get('razorpay_payment_id')
     order_id = request.GET.get('razorpay_order_id')
     payment_signature = request.GET.get('razorpay_signature')
+    shipping_address = request.GET.get('shipping_address')
+    print(shipping_address)
     
     order = Order.objects.get(razor_pay_order_id=order_id)
+    
+    
+    user_shipping_address = ShippingAddress.objects.filter(user=request.user).latest('id')
+            
+            # Create the shipping address string
+    shipping_address = (
+                f"{user_shipping_address.address}, "
+                f"{user_shipping_address.city}, "
+                f"{user_shipping_address.state}, "
+                f"{user_shipping_address.country}, "
+                f"{user_shipping_address.postal_code}"
+            )
+    
     
     # Check if the email has already been sent for this order in the session
     if not request.session.get('order_email_sent_{}'.format(order.id), False):
@@ -519,6 +534,7 @@ def payment_success(request):
         order.razor_pay_payment_id = payment_id
         order.razor_pay_payment_signature = payment_signature
         order.is_paid = True  # Update the order status
+        order.shipping_address = shipping_address
         order.save()
 
         # Retrieve order items for the email template
@@ -554,6 +570,8 @@ def payment_success(request):
     if order.is_paid:
         cart_items = CartItem.objects.all()
         cart_items.delete()
+        
+        
     
     return render(request, 'success.html', {'payment_id': payment_id, 'order_id': order_id})
 
@@ -675,11 +693,12 @@ def about_us(request):
 @login_required(login_url='signin')
 def order_detail_view(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    shipping_address = ShippingAddress.objects.get(user=request.user)  # Assuming each user has a single shipping address
+    
+    # shipping_address = ShippingAddress.objects.get(user=order.shippping_address)  # Assuming each user has a single shipping address
     
     context = {
         'order': order,
-        'shipping_address': shipping_address,
+        # 'shipping_address': shipping_address,
     }
     
     return render(request, 'order_details.html', context)
@@ -706,25 +725,25 @@ def shipping_address_edit(request, shipping_address_id):
 
 
 #create new shipping address
-@login_required(login_url='signin')
-def create_shipping_address(request):
-      old_shipping_addresses = ShippingAddress.objects.filter(user=request.user)
+# @login_required(login_url='signin')
+# def create_shipping_address(request):
+#       old_shipping_addresses = ShippingAddress.objects.filter(user=request.user)
 
-      if old_shipping_addresses:
-          messages.success(request, 'Same Address Already Exist')
-      if request.method=='POST':
-           user = request.user  # Assuming you're using Django's built-in User model
-           address = request.POST.get('address')
-           city = request.POST.get('city')
-           state = request.POST.get('state')
-           country = request.POST.get('country')
-           postal_code = request.POST.get('postal_code')  # Get the address data from the form
+#       if old_shipping_addresses:
+#           messages.success(request, 'Same Address Already Exist')
+#       if request.method=='POST':
+#            user = request.user  # Assuming you're using Django's built-in User model
+#            address = request.POST.get('address')
+#            city = request.POST.get('city')
+#            state = request.POST.get('state')
+#            country = request.POST.get('country')
+#            postal_code = request.POST.get('postal_code')  # Get the address data from the form
 
-        # Create a new shipping address record associated with the user
-           ShippingAddress.objects.get_or_create(user=user, address=address, city=city, state=state, country=country, postal_code=postal_code)
-           return redirect('userprofile')
+#         # Create a new shipping address record associated with the user
+#            ShippingAddress.objects.get_or_create(user=user, address=address, city=city, state=state, country=country, postal_code=postal_code)
+#            return redirect('userprofile')
    
-      return render(request, 'form_shipping_address.html')
+#       return render(request, 'form_shipping_address.html')
         
 
 
