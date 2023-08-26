@@ -54,6 +54,8 @@ class SignupForm(UserCreationForm):
                 message = 'Thank you for signing up!'
                 from_email = settings.EMAIL_HOST_USER
                 recipient_list = [user.email]
+                
+                
                 html_message = render_to_string('signupemail.html')
                 send_mail(subject, message, from_email, recipient_list, html_message=html_message)
 

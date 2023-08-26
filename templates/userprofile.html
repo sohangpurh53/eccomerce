@@ -38,6 +38,7 @@
                             </p>
                             <p>{{order_entry.order.created_at}}</p>
                         </li>
+                        <a id="view-button"  href="{% url 'order_detail_view' order_id=order_item.order.id %}">View order</a>
                     {% endfor %}
                 </ul>
              {% empty %}

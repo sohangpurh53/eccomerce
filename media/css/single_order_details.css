@@ -1,0 +1,48 @@
+/* Custom styles for order detail template */
+.container {
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+.address-section {
+    background-color: #f7f7f7;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.order-summary {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.paid {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.pending {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.order-items {
+    list-style: none;
+    padding-left: 0;
+}
+
+.order-items li {
+    margin-bottom: 10px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .col-md-6 {
+        margin-bottom: 20px;
+    }
+   
+}

@@ -657,3 +657,15 @@ def about_us(request):
     about_us = AboutUs.objects.last()   
     return render(request, 'about_us.html', {'about_us': about_us})
 
+
+@login_required(login_url='signin')
+def order_detail_view(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    shipping_address = ShippingAddress.objects.get(user=request.user)  # Assuming each user has a single shipping address
+    
+    context = {
+        'order': order,
+        'shipping_address': shipping_address,
+    }
+    
+    return render(request, 'order_details.html', context)

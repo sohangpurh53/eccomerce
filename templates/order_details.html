@@ -1,0 +1,36 @@
+<link rel="stylesheet" href="/css/single_order_details.css">
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center">Order Detail</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="address-section">
+                <h2>Shipping Address</h2>
+                <p><strong>Address:</strong> {{ shipping_address.address }}</p>
+                <p><strong>City:</strong> {{ shipping_address.city }}</p>
+                <p><strong>State:</strong> {{ shipping_address.state }}</p>
+                <p><strong>Country:</strong> {{ shipping_address.country }}</p>
+                <p><strong>Postal Code:</strong> {{ shipping_address.postal_code }}</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="order-summary">
+                <h2>Order Summary</h2>
+                <p><strong>Order ID:</strong> {{ order.id }}</p>
+                <p><strong>Total Amount:</strong> &#8377;{{ order.total_amount }}</p>
+                <p><strong>Payment Status:</strong> {% if order.is_paid %}<span class="paid">Paid</span>{% else %}<span class="pending">Pending</span>{% endif %}</p>
+                <p><strong>Order Items:</strong></p>
+                <ul class="order-items">
+                    {% for item in order.orderitem_set.all %}
+                        <li>{{ item.product.name }} - {{ item.quantity }} x &#8377;{{ item.product.price }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -89,6 +89,25 @@ a:hover {
 #user-total{
     font-size: 1.2rem;
 }
+
+
+#view-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#view-button:hover {
+    background-color: #2980b9;
+}
+
 @media (max-width: 767px){
     .container {
         max-width: 400px;
@@ -96,6 +115,21 @@ a:hover {
         padding: 20px;
     }
     
-    
+    #user-order ul li{
+        margin-bottom: 15px;
+        width: 200px;
+        height: auto;
+        background-color: #f0f0f0;
+    }
+    #user-total{
+        font-size: 1rem;
+    }
+    #view-button {
+        display: inline-block;
+        padding: 6px 10px;
+
+        border-radius: 2.5px;
+        font-size: 8px;
+    }
   
   }
