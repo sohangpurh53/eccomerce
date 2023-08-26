@@ -5,64 +5,14 @@
 <div class="container">
     <h1>Checkout</h1>
     <div class="row">
-      
-        <div class="col-md-8">
-            <h3>Select Shipping Address:</h3>
-            <div class="address-choice">
-                <label>
-                    <input type="radio" name="address_choice" value="saved"> Use Saved Address
-                </label>
-                <label>
-                    <input type="radio" name="address_choice" value="new"> Use New Address
-                </label>
-            </div>
-            <form method="get">
-                {% csrf_token %}
-                <div id="saved-address-form" >
-                <label for="new_address">Enter a new address</label>
-                {% if old_shipping_addresses %}
-                    {% for address in old_shipping_addresses %}
-                        <input type="radio" id="address_{{ address.id }}" name="address_choice" value="{{ address.id }}">
-                        <label for="address_{{ address.id }}">{{ address.address }}, {{ address.city }}, {{ address.state }}</label><br>
-                    {% endfor %}
-                {% else %}
-                    <p>You don't have any saved addresses.</p>
-                {% endif %}
-            </div>
-        </form>
-        <form  action="" method="post">
-            {% csrf_token %}
-            <div id="new-address-form">
-                <div class="form-group">
-                    <label for="address">Address</label>
-                    <input type="text" class="form-control" id="address" name="address" required>
-                </div>
-                <div class="form-group">
-                    <label for="city">City</label>
-                    <input type="text" class="form-control" id="city" name="city" required>
-                </div>
-                <div class="form-group">
-                    <label for="state">State</label>
-                    <input type="text" class="form-control" id="state" name="state" required>
-                </div>
-                <div class="form-group">
-                    <label for="country">Country</label>
-                    <input type="text" class="form-control" id="country" name="country" required>
-                </div>
-                <div class="form-group">
-                    <label for="postal_code">Postal Code</label>
-                    <input type="text" class="form-control" id="postal_code" name="postal_code" required>
-                </div>
-            </div>  
-            <button type="submit" id="rzp-button1" class="btn btn-primary">Place your order</button>
-            </form>
+            
             <div class="col-md-4">
                 <h4>Order Summary</h4>
                 <ul class="list-group">
                     {% for item in cart_items %}
                     <li class="list-group-item">
                         <img class="product-image" src="{{ item.product_image.image.url }}" alt="">
-                        {{ item.cart_item.product.name }} - {{ item.cart_item.quantity }} x &#8377;{{ item.cart_item.product.price }}
+                        {{ item.cart_item.product.name }} - {{ item.cart_item.quantity }} x &#8377;{{ item.cart_itemproduct.price }}
                     </li>
                     {% endfor %}
                     {% if not shipping_fee %}
@@ -76,14 +26,79 @@
                     {% endif %}
                 </ul>
                 <h5 class="total-amount">Total Amount: &#8377;{{ total_amount }}</h5>
-       
-              
-              
+                <form id="checkout_form" method="post" action="{% url 'checkout' %}">
+                    {% csrf_token %}
+                    
+                    <div id="address_choice">
+                        <input type="radio" id="new_address" name="address_choice" value="new" >
+                        <label for="new_address">Enter a new address</label>
+                        
+                        {% if old_shipping_addresses %}
+                            {% for address in old_shipping_addresses %}
+                                <input type="radio" id="address_{{ address.id }}" name="address_choice" value="{{ address.id }}">
+                                <label for="address_{{ address.id }}">{{ address.address }}, {{ address.city }}, {{ address.state }}</label><br>
+                            {% endfor %}
+                        {% else %}
+                            <p>You don't have any saved addresses.</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div id="new_address_fields" style="display: none;">
+                        <!-- Address input fields -->
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" class="form-control" id="address" name="address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" class="form-control" id="city" name="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="state">State</label>
+                                <input type="text" class="form-control" id="state" name="state" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="country">Country</label>
+                                <input type="text" class="form-control" id="country" name="country" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="postal_code">Postal Code</label>
+                                <input type="text" class="form-control" id="postal_code" name="postal_code" required>
+                            </div>
+                        </div>
+                        <!-- Other address input fields -->
+                    </div>
+                    
+                    <button type="submit" id="rzp-button1" class="btn btn-primary">Place your order</button>
+                </form>
         </div>
     </div>
 </div>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+const addressChoice = document.getElementById('address_choice');
+const newAddressFields = document.getElementById('new_address_fields');
+
+addressChoice.addEventListener('change', function() {
+    if (document.getElementById('new_address').checked) {
+        newAddressFields.style.display = 'block';
+        // Make all new address fields required
+        const newAddressInputs = newAddressFields.querySelectorAll('input');
+        newAddressInputs.forEach(input => {
+            input.required = true;
+        });
+    } else {
+        newAddressFields.style.display = 'none';
+        // Remove required attribute from new address fields
+        const newAddressInputs = newAddressFields.querySelectorAll('input');
+        newAddressInputs.forEach(input => {
+            input.required = false;
+        });
+        // Submit the form immediately if saved address is selected
+        document.getElementById('checkout_form').submit();
+    }
+});
+
 var options = {
     "key": "{{razorpay_key}}", // Enter the Key ID generated from the Dashboard
     "amount": "{{total_amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
@@ -103,6 +118,7 @@ var options = {
         "color": "#3399cc"
     }
 };
+
 var rzp1 = new Razorpay(options);
 rzp1.on('payment.failed', function (response){
     window.location.href = window.location.href = `/failure/?error_code=${response.error.code}&error_description=${response.error.description}`;
@@ -129,16 +145,6 @@ document.getElementById('rzp-button1').onclick = function(e){
 }
 
 // Handle address choice
-const savedAddressForm = document.getElementById('saved-address-form');
-    const newAddressForm = document.getElementById('new-address-form');
-    const checkoutBtn = document.getElementById('checkout-btn');
-
-    document.querySelectorAll('input[name="address_choice"]').forEach((radio) => {
-        radio.addEventListener('change', () => {
-            savedAddressForm.classList.toggle('active', radio.value === 'saved');
-            newAddressForm.classList.toggle('active', radio.value === 'new');
-        });
-    });
 
 </script>
 {% endblock %}

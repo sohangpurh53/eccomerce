@@ -425,7 +425,7 @@ def checkout(request):
             postal_code = request.POST.get('postal_code')
 
             # Create a new ShippingAddress instance
-            if address and city and state and country and postal_code:
+            if address==address and city==city and state==state and country==country and postal_code==postal_code:
              shipping_address = ShippingAddress.objects.get_or_create(
                 user=user,
                 address=address,
