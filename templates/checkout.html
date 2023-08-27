@@ -110,7 +110,7 @@ var options = {
     "handler": function (response){
 
         window.location.href = `/success/?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}&razorpay_signature=${response.razorpay_signature}`
-
+        console.log(response.error)
         
     },
    
@@ -119,23 +119,6 @@ var options = {
     }
 };
 
-var rzp1 = new Razorpay(options);
-rzp1.on('payment.failed', function (response){
-    window.location.href = window.location.href = `/failure/?error_code=${response.error.code}&error_description=${response.error.description}`;
-       
-});
-
-var rzp2 = new Razorpay(options);
-
-document.getElementById('rzp-button1').onclick = function(e){
-    rzp2.open();
-    e.preventDefault();
-    return false; // Add this line to prevent the form submission
-}
-
-// Automatically trigger Razorpay form submission when the page loads
-rzp2.open();
-
 var rzp = new Razorpay(options);
 
 document.getElementById('rzp-button1').onclick = function(e){
@@ -143,6 +126,25 @@ document.getElementById('rzp-button1').onclick = function(e){
     e.preventDefault();
     return false; // Prevent form submission
 }
+
+
+rzp.on('payment.failed', function (response){
+    window.location.href = window.location.href = `/failure/?error_code=${response.error.code}&error_description=${response.error.description}`;
+       
+});
+
+
+
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp.open();
+    e.preventDefault();
+    return false; // Add this line to prevent the form submission
+}
+
+// Automatically trigger Razorpay form submission when the page loads
+rzp.open();
+
+
 
 // Handle address choice
 
