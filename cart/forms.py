@@ -87,3 +87,7 @@ class AboutUsForm(forms.ModelForm):
         model = AboutUs
         fields = ['description']
 
+class ContactForm(forms.Form):
+    subject = forms.CharField(max_length=100)
+    message = forms.CharField(widget=forms.Textarea)
+    sender = forms.EmailField()

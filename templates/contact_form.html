@@ -1,0 +1,80 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 40%;
+            margin: auto;
+            overflow: hidden;
+        }
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px 0px #aaa;
+        }
+        input[type="text"],
+        textarea, input[type="email"] {
+            
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-left: 40%;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        @media (max-width: 767px){
+            .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        button[type="submit"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-left:30%;
+        }
+  }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Contact Us</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="{{ form.subject.id_for_label }}">Subject:</label><br>
+            {{ form.subject }}<br>
+            <label for="{{ form.message.id_for_label }}">Message:</label><br>
+            {{ form.message }}<br>
+            <label for="{{ form.sender.id_for_label }}">Your Email:</label><br>
+            {{ form.sender }}<br><br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
+{% endblock %}

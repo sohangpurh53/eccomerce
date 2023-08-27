@@ -20,7 +20,7 @@
          {% endif %}
           <li><a href="{% url 'categories_product' %}">Categories</a></li>
           <li><a href="{% url 'about_us' %}">About Us</a></li>
-          <li><a href="#">Contact</a></li>
+          {% if user.is_authenticated %} <li><a href="{% url 'contact' %}"><i class="fa fa-thin fa-address-book"></i>Contact-Us</a></li> {% endif %}
         </ul>
       </div>
       <div class="footer-social">

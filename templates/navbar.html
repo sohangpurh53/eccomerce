@@ -67,8 +67,9 @@
         <li><a href="{% url 'Homepage' %}"><i class="fa fa-home"></i> Home</a></li>
         <li><a href="{% url 'categories_product' %}">Categories</a></li>
         <li><a  href="{% url 'cart_view' %}"><i class="fas fa-shopping-cart"></i> Cart</a></li>
-        <li><a href="#"><i class="fa fa-thin fa-address-book"></i> Contact</a></li>
+        
         {% if user.is_authenticated %}
+        <li><a href="{% url 'contact' %}"><i class="fa fa-thin fa-address-book"></i> Contact-Us</a></li>
         <li><a href="{% url 'signout' %}">SignOut <i class="fas fa-sign-out-alt"></i></a></li>
         {% if request.user.seller %}
         <li><a href="{% url 'sellerprofile' %}"> <i class="fas fa-user"></i>SellerProfile</a></li>

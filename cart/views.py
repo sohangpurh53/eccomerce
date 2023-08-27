@@ -1,7 +1,7 @@
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Order, OrderItem, Product, Category,Seller, Cart, CartItem, ShippingAddress,Review, AboutUs, ProductImage
-from .forms import SellerRegistrationForm, ProductForm, SignupForm,LoginForm, ShippingAddressForm, ReviewForm, AboutUsForm, ProductImageForm
+from .forms import ContactForm, SellerRegistrationForm, ProductForm, SignupForm,LoginForm, ShippingAddressForm, ReviewForm, AboutUsForm, ProductImageForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -12,6 +12,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 # Create your views here.
 
 #homepage display all product
@@ -624,6 +625,8 @@ def userprofile(request):
     orders = Order.objects.filter(user=user)
     shipping_address = ShippingAddress.objects.filter(user=user)
     
+    count = shipping_address.count()
+    
     
     order_data = []
     for order in orders:
@@ -633,7 +636,7 @@ def userprofile(request):
             'order_items': order_items
         })
 
-    context = {'user':user, 'order_data': order_data, 'shipping_address':shipping_address}
+    context = {'user':user, 'order_data': order_data, 'shipping_address':shipping_address, 'count':count}
           
     return render(request, 'userprofile.html', context)
 
@@ -747,10 +750,54 @@ def shipping_address_edit(request, shipping_address_id):
         
 
 
- #current not in use
-# @login_required(login_url='signin')
-# def shipping_address_delete(request, shipping_address_id):
-#     shipping_address = get_object_or_404(ShippingAddress, id=shipping_address_id)
-#     shipping_address.delete()
-#     messages.success(request, 'Address deleted successfully')
-#     return redirect('userprofile')
+#  current not in use
+@login_required(login_url='signin')
+def shipping_address_delete(request, shipping_address_id):
+    shipping_address = get_object_or_404(ShippingAddress, id=shipping_address_id)
+    shipping_address.delete()
+    messages.success(request, 'Address deleted successfully')
+    return redirect('userprofile')
+
+
+
+
+
+# Contact us form
+@login_required(login_url='signin')
+def contact_view(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            sender = form.cleaned_data['sender']
+
+            # Send email to the designated recipient
+            recipient_email = settings.EMAIL_HOST_USER  # Replace with actual email
+            recipient_message = render_to_string('recipient_contact_email.html', {
+                'user': request.user,
+                'subject': subject,  # Add subject to context
+                'message': message,
+                'sender': sender,
+            })
+            send_mail(subject, strip_tags(recipient_message), sender, [recipient_email], html_message=recipient_message)
+
+            company = 'Lulu-Collection53'
+            user_message = render_to_string('user_thank_you_email.html', {
+                'user': request.user,
+                'company': company
+            })
+            # Send a confirmation email to the user
+            send_mail('Thank you for contacting us', strip_tags(user_message), recipient_email, [sender], html_message=user_message)
+
+            return redirect('thankyou')  # Create this template
+    else:
+        form = ContactForm()
+
+    return render(request, 'contact_form.html', {'form': form})
+      
+
+def thankyou(request):
+    return render(request, 'thank_you_for_contact.html')
+
+  

@@ -21,7 +21,7 @@
             {% if user.email %} <p>Email: {{ user.email }}</p> {% endif %}
           {% if user.seller %}  <p>Company: {{ user.seller.company_name }}</p> <!-- If the user is a seller -->{% endif %}
         {{order_item.user}}
-        {% if shipping_address %}
+        
       {% for address in shipping_address %}   
       <div class="address-section">
         <h2>Shipping Address</h2>
@@ -31,14 +31,13 @@
         <p><strong>State:</strong> {{ address.state }}</p>
         <p><strong>Country:</strong> {{ address.country }}</p>
         <p><strong>Postal Code:</strong> {{ address.postal_code }}</p> 
-        
-        
-      
+      {% if count > 1 %} 
+       <a  class="delete-button" href="{% url 'shipping_address_delete' shipping_address_id=address.id %}">Delete</a>
+      {% endif %}
     </div>
     {% endfor %}
-    {% else %}
    
-    {% endif %}
+    
         </div>
         <h4>Your Orders:</h4>
 
